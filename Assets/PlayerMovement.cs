@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
         leftRightInput = Input.GetAxisRaw("Horizontal");
         forwardBackwardInput = Input.GetAxisRaw("Vertical");
 
-        controller.Move(new Vector3(leftRightInput, 0, forwardBackwardInput) * 5 * Time.deltaTime);
+        controller.Move(new Vector3(leftRightInput, 0, forwardBackwardInput).normalized * 5 * Time.deltaTime);
     }
 
 }

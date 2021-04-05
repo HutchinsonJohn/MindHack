@@ -6,11 +6,11 @@ public class ThirdPersonCamera : MonoBehaviour
 {
 
     public Transform lookAt;
-    public Transform camTranform;
+    public Transform camTransform;
 
     public Camera cam;
 
-    private float distance = 10f;
+    private float distance = 7f;
     //private float height;
     private float currentX = 0f;
     private float currentY = 0f;
@@ -20,7 +20,7 @@ public class ThirdPersonCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        camTranform = transform;
+        camTransform = transform;
         cam = Camera.main;
     }
 
@@ -35,8 +35,8 @@ public class ThirdPersonCamera : MonoBehaviour
         Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(45, 0, 0);
         Vector3 pos = lookAt.position + rotation * dir;
-        pos.z = Mathf.Max(pos.z, -20);
-        camTranform.position = pos;
-        camTranform.LookAt(lookAt.position);
+        pos.z = Mathf.Max(pos.z, -19.5f);
+        camTransform.position = pos;
+        camTransform.LookAt(lookAt.position);
     }
 }
