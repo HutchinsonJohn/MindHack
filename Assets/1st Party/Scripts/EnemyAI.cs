@@ -13,6 +13,9 @@ public class EnemyAI : MonoBehaviour
     private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
     private float engageDistance = 10f;
     private float shootingDistance = 5f;
+    private bool playerSpotted;
+
+    Coroutine _rotationCoroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -25,8 +28,10 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(alertState);
         if (fow.FindTarget())
         {
+            playerSpotted = true;
             agent.SetDestination(fow.bestTarget.position);
             transform.LookAt(fow.bestTarget);
             agent.stoppingDistance = 5;
@@ -63,11 +68,19 @@ public class EnemyAI : MonoBehaviour
             }
         } else
         {
+            playerSpotted = false;
             switch (alertState)
             {
                 case 1:
                     agent.stoppingDistance = 5;
-                    //continue to destination, then look around in place, then resume patrol
+                    if (!agent.hasPath)
+                    {
+                        //look around in place, then resume patrol
+                        //look coroutine
+                        if (_rotationCoroutine == null)
+                            _rotationCoroutine = StartCoroutine(LookCoroutine());
+                    }
+                    
                     break;
                 case 2:
                     agent.stoppingDistance = 0;
@@ -76,6 +89,11 @@ public class EnemyAI : MonoBehaviour
                 case 3:
                     agent.stoppingDistance = 0;
                     //continue to destination, look around, then switch to searching state
+                    if (!agent.hasPath)
+                    {
+                        if (_rotationCoroutine == null)
+                            _rotationCoroutine = StartCoroutine(LookCoroutine());
+                    }
                     break;
                 default:
                     agent.stoppingDistance = 0;
@@ -84,4 +102,37 @@ public class EnemyAI : MonoBehaviour
             }   
         }
     }
+
+    IEnumerator LookCoroutine()
+    {
+        // Until our current rotation aligns with the target...
+        while (Quaternion.Dot(transform.rotation, Quaternion.Euler(0,90,0)) < 1f)
+        {
+            if (playerSpotted)
+            {
+                yield return null;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                Quaternion.Euler(0, 90, 0),
+                90f * Time.deltaTime
+            );
+
+            // Adjust our position to preserve the relationship to the pivot.
+            //Vector3 offset = transform.TransformPoint(_localOffset);
+            //transform.position = rotatePoint - offset;
+
+            // Wait a frame, then resume.
+            yield return null;
+        }
+        if (!playerSpotted)
+        {
+            alertState = 0;
+        }
+        
+        // Clear the coroutine so the next input starts a fresh one.
+        _rotationCoroutine = null;
+    }
+
 }

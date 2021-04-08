@@ -8,7 +8,7 @@ public class PatrolPath : MonoBehaviour
 
     public Transform[] patrolPoints;
     public float[] patrolPauseTimes;
-    UnityEngine.AI.NavMeshAgent agent;
+    public UnityEngine.AI.NavMeshAgent agent;
     private int listPosition;
     private bool isWaiting;
 
@@ -31,7 +31,6 @@ public class PatrolPath : MonoBehaviour
 
     public void Patrol()
     {
-        Debug.Log(listPosition);
         if (isWaiting)
         {
             return;
