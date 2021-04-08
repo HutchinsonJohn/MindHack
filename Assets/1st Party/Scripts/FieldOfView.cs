@@ -15,7 +15,7 @@ public class FieldOfView : MonoBehaviour
     [HideInInspector]
     public Transform bestTarget;
 
-    public void FindTarget()
+    public bool FindTarget()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
         bestTarget = null;
@@ -36,6 +36,7 @@ public class FieldOfView : MonoBehaviour
                 }
             }
         }
+        return (bestTarget != null);
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
