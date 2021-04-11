@@ -8,7 +8,7 @@ public class PatrolPath : MonoBehaviour
 
     public Transform[] patrolPoints;
     public float[] patrolPauseTimes;
-    public UnityEngine.AI.NavMeshAgent agent;
+    public NavMeshAgent agent;
     private int listPosition;
     private bool isWaiting;
 

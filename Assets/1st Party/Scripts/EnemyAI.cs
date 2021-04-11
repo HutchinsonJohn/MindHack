@@ -7,15 +7,18 @@ public class EnemyAI : MonoBehaviour
 {
 
     public Transform target;
-    UnityEngine.AI.NavMeshAgent agent;
+    NavMeshAgent agent;
     private PatrolPath patrol;
     private FieldOfView fow;
     private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
     private float engageDistance = 10f;
     private float shootingDistance = 5f;
     private bool playerSpotted;
+    private float turnAngle = 75f;
 
-    Coroutine _rotationCoroutine;
+    Coroutine rotationCoroutine;
+    Coroutine searchCoroutine;
+    Coroutine cautionCoroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +31,7 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(alertState);
+        Debug.Log(alertState);
         if (fow.FindTarget())
         {
             playerSpotted = true;
@@ -39,9 +42,10 @@ public class EnemyAI : MonoBehaviour
             {
                 case 0:
                     if (Vector3.Distance(transform.position, fow.bestTarget.position) > 10)
-                    {
-                        alertState = 1;
+                    {   
                         //pause, then walk towards
+                        if (cautionCoroutine == null)
+                            cautionCoroutine = StartCoroutine(CautionCoroutine());
                     }
                     else
                     {
@@ -62,6 +66,10 @@ public class EnemyAI : MonoBehaviour
                         alertState = 3;
                     }
                     break;
+                case 2:
+                    alertState = 3;
+                    //alert all other enemies that there is a target
+                    break;
                 default:
                     //engage
                     break;
@@ -69,34 +77,31 @@ public class EnemyAI : MonoBehaviour
         } else
         {
             playerSpotted = false;
+            agent.stoppingDistance = 0;
             switch (alertState)
             {
                 case 1:
-                    agent.stoppingDistance = 5;
-                    if (!agent.hasPath)
+                    if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
-                        //look around in place, then resume patrol
-                        //look coroutine
-                        if (_rotationCoroutine == null)
-                            _rotationCoroutine = StartCoroutine(LookCoroutine());
+                        if (rotationCoroutine == null)
+                            rotationCoroutine = StartCoroutine(LookCoroutine());
                     }
                     
                     break;
                 case 2:
-                    agent.stoppingDistance = 0;
                     //look around the area, then resume patrol
+                    if (searchCoroutine == null)
+                        searchCoroutine = StartCoroutine(SearchCoroutine());
                     break;
                 case 3:
-                    agent.stoppingDistance = 0;
                     //continue to destination, look around, then switch to searching state
-                    if (!agent.hasPath)
+                    if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
-                        if (_rotationCoroutine == null)
-                            _rotationCoroutine = StartCoroutine(LookCoroutine());
+                        if (rotationCoroutine == null)
+                            rotationCoroutine = StartCoroutine(LookCoroutine());
                     }
                     break;
                 default:
-                    agent.stoppingDistance = 0;
                     patrol.Patrol();
                     break;
             }   
@@ -106,33 +111,126 @@ public class EnemyAI : MonoBehaviour
     IEnumerator LookCoroutine()
     {
         // Until our current rotation aligns with the target...
-        while (Quaternion.Dot(transform.rotation, Quaternion.Euler(0,90,0)) < 1f)
+        Quaternion forward = transform.rotation;
+        Vector3 euler = forward.eulerAngles;
+        Quaternion left = Quaternion.Euler(euler.x, euler.y - turnAngle, euler.z);
+        Quaternion right = Quaternion.Euler(euler.x, euler.y + turnAngle, euler.z);
+        while (Quaternion.Dot(transform.rotation, right) < 1f)
         {
             if (playerSpotted)
             {
-                yield return null;
+                rotationCoroutine = null;
+                yield break;
             }
             // Rotate at a consistent speed toward the target.
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                Quaternion.Euler(0, 90, 0),
-                90f * Time.deltaTime
+                right,
+                turnAngle * Time.deltaTime
             );
-
-            // Adjust our position to preserve the relationship to the pivot.
-            //Vector3 offset = transform.TransformPoint(_localOffset);
-            //transform.position = rotatePoint - offset;
 
             // Wait a frame, then resume.
             yield return null;
         }
-        if (!playerSpotted)
+        yield return new WaitForSeconds(1);
+        while (Quaternion.Dot(transform.rotation, left) < 1f)
         {
-            alertState = 0;
+            if (playerSpotted)
+            {
+                rotationCoroutine = null;
+                yield break;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                left,
+                turnAngle * Time.deltaTime
+            );
+
+            // Wait a frame, then resume.
+            yield return null;
         }
+        yield return new WaitForSeconds(1);
+        while (Quaternion.Dot(transform.rotation, forward) < 1f)
+        {
+            if (playerSpotted)
+            {
+                rotationCoroutine = null;
+                yield break;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                forward,
+                turnAngle * Time.deltaTime
+            );
+
+            // Wait a frame, then resume.
+            yield return null;
+        }
+
+        alertState--;
         
         // Clear the coroutine so the next input starts a fresh one.
-        _rotationCoroutine = null;
+        rotationCoroutine = null;
+    }
+
+    IEnumerator SearchCoroutine()
+    {
+        agent.SetDestination(transform.position + transform.forward * 5);
+        while (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
+        {
+            yield return null;
+        }
+        Quaternion forward = transform.rotation;
+        Vector3 euler = forward.eulerAngles;
+        Quaternion left = Quaternion.Euler(euler.x, euler.y - turnAngle, euler.z);
+        Quaternion right = Quaternion.Euler(euler.x, euler.y + turnAngle, euler.z);
+        while (Quaternion.Dot(transform.rotation, right) < 1f)
+        {
+            if (playerSpotted)
+            {
+                searchCoroutine = null;
+                yield break;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                right,
+                turnAngle * Time.deltaTime
+            );
+
+            // Wait a frame, then resume.
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
+        while (Quaternion.Dot(transform.rotation, left) < 1f)
+        {
+            if (playerSpotted)
+            {
+                searchCoroutine = null;
+                yield break;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                left,
+                turnAngle * Time.deltaTime
+            );
+
+            // Wait a frame, then resume.
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
+        alertState = 0;
+
+        searchCoroutine = null;
+    }
+
+    IEnumerator CautionCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        alertState = 1;
     }
 
 }
