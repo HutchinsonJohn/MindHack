@@ -6,6 +6,7 @@ public class FieldOfView : MonoBehaviour
 {
 
     public float viewRadius;
+    public float hackRadius;
     [Range(0,360)]
     public float viewAngle;
 
@@ -13,12 +14,13 @@ public class FieldOfView : MonoBehaviour
     public LayerMask obstacleMask;
 
     [HideInInspector]
-    public Transform bestTarget;
+    public Transform viewTarget;
+    public Transform hackTarget;
 
     public bool FindTarget()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        bestTarget = null;
+        viewTarget = null;
         float lowestAngle = viewAngle;
         for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
@@ -31,12 +33,31 @@ public class FieldOfView : MonoBehaviour
 
                 if (!Physics.Raycast(transform.position, dirToTarget, disToTarget, obstacleMask))
                 {
-                    bestTarget = target;
+                    viewTarget = target;
                     lowestAngle = angleBetweenTargetAndLook;
                 }
             }
         }
-        return (bestTarget != null);
+        return (viewTarget != null);
+    }
+
+    public bool FindIndirectTarget()
+    {
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, hackRadius, targetMask);
+        hackTarget = null;
+        float lowestAngle = viewAngle;
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
+        {
+            Transform target = targetsInViewRadius[i].transform;
+            Vector3 dirToTarget = (target.position - transform.position).normalized;
+            float angleBetweenTargetAndLook = Vector3.Angle(transform.forward, dirToTarget);
+            if (angleBetweenTargetAndLook < viewAngle / 2 && angleBetweenTargetAndLook < lowestAngle)
+            {
+                hackTarget = target;
+                lowestAngle = angleBetweenTargetAndLook;
+            }
+        }
+        return (hackTarget != null);
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)

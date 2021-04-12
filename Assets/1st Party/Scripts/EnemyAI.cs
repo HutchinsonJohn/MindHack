@@ -15,6 +15,8 @@ public class EnemyAI : MonoBehaviour
     private float shootingDistance = 5f;
     private bool playerSpotted;
     private float turnAngle = 75f;
+    private bool hacked;
+    private bool killed;
 
     Coroutine rotationCoroutine;
     Coroutine searchCoroutine;
@@ -28,21 +30,46 @@ public class EnemyAI : MonoBehaviour
         fow = GetComponent<FieldOfView>();
     }
 
+    void Hacked()
+    {
+        hacked = true;
+    }
+
+    void Killed()
+    {
+        killed = true;
+        gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
+        agent.SetDestination(transform.position); //This is so fucking stupid, but resetting the path does not guarantee that a path that was being generated wont continue to be generated and be set later
+    }
+
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(alertState);
+        if (killed) {
+            //dying animation/ragdoll, then the corresponding knock out effect (probably split up message into slept, killed, mindhacked)
+        }
+        else if (hacked) {
+            //probably handle everything in player movement
+        } else {
+            Debug.Log(alertState);
+            EnemyBehavior();
+        }
+        
+    }
+
+    private void EnemyBehavior()
+    {
         if (fow.FindTarget())
         {
             playerSpotted = true;
-            agent.SetDestination(fow.bestTarget.position);
-            transform.LookAt(fow.bestTarget);
+            agent.SetDestination(fow.viewTarget.position);
+            transform.LookAt(fow.viewTarget);
             agent.stoppingDistance = 5;
             switch (alertState)
             {
                 case 0:
-                    if (Vector3.Distance(transform.position, fow.bestTarget.position) > 10)
-                    {   
+                    if (Vector3.Distance(transform.position, fow.viewTarget.position) > 10)
+                    {
                         //pause, then walk towards
                         if (cautionCoroutine == null)
                             cautionCoroutine = StartCoroutine(CautionCoroutine());
@@ -55,7 +82,7 @@ public class EnemyAI : MonoBehaviour
                     }
                     break;
                 case 1:
-                    if (Vector3.Distance(transform.position, fow.bestTarget.position) > 10)
+                    if (Vector3.Distance(transform.position, fow.viewTarget.position) > 10)
                     {
                         //continute to destination
                     }
@@ -74,7 +101,8 @@ public class EnemyAI : MonoBehaviour
                     //engage
                     break;
             }
-        } else
+        }
+        else
         {
             playerSpotted = false;
             agent.stoppingDistance = 0;
@@ -86,7 +114,7 @@ public class EnemyAI : MonoBehaviour
                         if (rotationCoroutine == null)
                             rotationCoroutine = StartCoroutine(LookCoroutine());
                     }
-                    
+
                     break;
                 case 2:
                     //look around the area, then resume patrol
@@ -104,7 +132,7 @@ public class EnemyAI : MonoBehaviour
                 default:
                     patrol.Patrol();
                     break;
-            }   
+            }
         }
     }
 
