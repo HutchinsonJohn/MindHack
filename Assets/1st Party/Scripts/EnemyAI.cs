@@ -21,6 +21,9 @@ public class EnemyAI : MonoBehaviour
     Coroutine rotationCoroutine;
     Coroutine searchCoroutine;
     Coroutine cautionCoroutine;
+    Coroutine discoverCoroutine;
+
+    public Transform[] otherEnemies;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +31,7 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         patrol = GetComponent<PatrolPath>();
         fow = GetComponent<FieldOfView>();
+        line = GetComponent<LineRenderer>();
     }
 
     void Hacked()
@@ -63,6 +67,7 @@ public class EnemyAI : MonoBehaviour
         {
             playerSpotted = true;
             agent.SetDestination(fow.viewTarget.position);
+            StartCoroutine(GetPath());
             transform.LookAt(fow.viewTarget);
             agent.stoppingDistance = 5;
             switch (alertState)
@@ -77,8 +82,9 @@ public class EnemyAI : MonoBehaviour
                     else
                     {
                         //play alert sound
-                        //alert all other enemies that there is a target
-                        alertState = 3;
+                        agent.isStopped = true;
+                        if (discoverCoroutine == null)
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine());
                     }
                     break;
                 case 1:
@@ -89,16 +95,18 @@ public class EnemyAI : MonoBehaviour
                     else
                     {
                         //play alert sound
-                        //alert all other enemies that there is a target
-                        alertState = 3;
+                        agent.isStopped = true;
+                        if (discoverCoroutine == null)
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine());
                     }
                     break;
                 case 2:
                     alertState = 3;
-                    //alert all other enemies that there is a target
+                    NotfiyOthers(fow.viewTarget.position);
                     break;
                 default:
                     //engage
+                    NotfiyOthers(fow.viewTarget.position);
                     break;
             }
         }
@@ -131,9 +139,24 @@ public class EnemyAI : MonoBehaviour
                     break;
                 default:
                     patrol.Patrol();
+                    StartCoroutine(GetPath());
                     break;
             }
         }
+    }
+
+    void NotfiyOthers(Vector3 pos)
+    {
+        foreach (Transform enemy in otherEnemies)
+        {
+            enemy.SendMessage("Alert", pos);
+        }
+    }
+
+    void Alert(Vector3 pos)
+    {
+        alertState = 3;
+        agent.SetDestination(pos);
     }
 
     IEnumerator LookCoroutine()
@@ -205,7 +228,17 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator SearchCoroutine()
     {
-        agent.SetDestination(transform.position + transform.forward * 5);
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 5f, default))
+        {
+            float dist = Vector3.Distance(transform.position, hit.point);
+            if (dist > 0.5f) {
+                agent.SetDestination(transform.position + transform.forward * dist);
+            }
+        } else 
+        {
+            agent.SetDestination(transform.position + transform.forward * 5);
+        }
+        
         while (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
         {
             yield return null;
@@ -259,6 +292,44 @@ public class EnemyAI : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         alertState = 1;
+
+        cautionCoroutine = null;
+    }
+
+    IEnumerator DiscoverCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        agent.isStopped = false;
+        NotfiyOthers(fow.viewTarget.position);
+        alertState = 3;
+
+        discoverCoroutine = null;
+    }
+
+    LineRenderer line;
+
+    IEnumerator GetPath()
+    {
+        line.SetPosition(0, transform.position - Vector3.up); //set the line's origin
+
+        yield return null; //wait for the path to generate
+
+        DrawPath(agent.path);
+
+        //agent.Stop();//add this if you don't want to move the agent
+    }
+
+    void DrawPath(NavMeshPath path)
+    {
+        if (path.corners.Length < 2) //if the path has 1 or no corners, there is no need
+            return;
+
+        line.positionCount = path.corners.Length; //set the array of positions to the amount of corners
+
+        for (var i = 1; i < path.corners.Length; i++)
+        {
+            line.SetPosition(i, path.corners[i]); //go through each corner and set that to the line renderer's position
+        }
     }
 
 }
