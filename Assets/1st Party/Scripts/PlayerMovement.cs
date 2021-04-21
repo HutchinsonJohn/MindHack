@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private CharacterController playerController;
     private CharacterController hackController;
+    private Animator animator;
     private Camera viewCamera;
     private Transform camTransform;
     private FieldOfView fow;
@@ -34,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
         playerController = GetComponent<CharacterController>();
         controller = playerController;
         transformTarget = transform;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -44,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         ThirdPersonCamera();
         fow.FindTarget();
         Hack();
+        animator.SetFloat("Speed", playerController.velocity.magnitude);
     }
 
     private void Movement()

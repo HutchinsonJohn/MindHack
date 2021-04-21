@@ -5,11 +5,13 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-
     public Transform target;
     NavMeshAgent agent;
     private PatrolPath patrol;
     private FieldOfView fow;
+    private Actions actions;
+    private Animator animator;
+    private PlayerController playerController;
     private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
     private float engageDistance = 10f;
     private float shootingDistance = 5f;
@@ -17,6 +19,7 @@ public class EnemyAI : MonoBehaviour
     private float turnAngle = 75f;
     private bool hacked;
     private bool killed;
+    private bool arrived;
 
     Coroutine rotationCoroutine;
     Coroutine searchCoroutine;
@@ -32,6 +35,10 @@ public class EnemyAI : MonoBehaviour
         patrol = GetComponent<PatrolPath>();
         fow = GetComponent<FieldOfView>();
         line = GetComponent<LineRenderer>();
+        actions = GetComponent<Actions>();
+        animator = GetComponent<Animator>();
+        playerController = GetComponent<PlayerController>();
+        playerController.SetArsenal("AK-74M");
     }
 
     void Hacked()
@@ -57,6 +64,14 @@ public class EnemyAI : MonoBehaviour
         } else {
             Debug.Log(alertState);
             EnemyBehavior();
+            //if (agent.velocity.magnitude > 0.1)
+            //{
+            //    actions.Walk();
+            //} else
+            //{
+            //    actions.Stay();
+            //}
+            animator.SetFloat("Speed", agent.velocity.magnitude);
         }
         
     }
@@ -68,8 +83,9 @@ public class EnemyAI : MonoBehaviour
             playerSpotted = true;
             agent.SetDestination(fow.viewTarget.position);
             StartCoroutine(GetPath());
-            transform.LookAt(fow.viewTarget);
+            transform.LookAt(fow.viewTarget.position - Vector3.up);
             agent.stoppingDistance = 5;
+            arrived = false;
             switch (alertState)
             {
                 case 0:
@@ -105,6 +121,11 @@ public class EnemyAI : MonoBehaviour
                     NotfiyOthers(fow.viewTarget.position);
                     break;
                 default:
+                    if (Vector3.Distance(transform.position, fow.viewTarget.position) < 9)
+                    {
+                        //pause, then walk towards
+                        actions.Attack();
+                    }
                     //engage
                     NotfiyOthers(fow.viewTarget.position);
                     break;
@@ -113,10 +134,10 @@ public class EnemyAI : MonoBehaviour
         else
         {
             playerSpotted = false;
-            agent.stoppingDistance = 0;
             switch (alertState)
             {
                 case 1:
+                    agent.stoppingDistance = 0;
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
                         if (rotationCoroutine == null)
@@ -125,12 +146,21 @@ public class EnemyAI : MonoBehaviour
 
                     break;
                 case 2:
+                    agent.stoppingDistance = 0;
+                    arrived = false;
                     //look around the area, then resume patrol
                     if (searchCoroutine == null)
                         searchCoroutine = StartCoroutine(SearchCoroutine());
                     break;
                 case 3:
                     //continue to destination, look around, then switch to searching state
+                    if (arrived)
+                    {
+                        agent.stoppingDistance = 5;
+                    } else
+                    {
+                        agent.stoppingDistance = 0;
+                    }
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
                         if (rotationCoroutine == null)
@@ -138,6 +168,7 @@ public class EnemyAI : MonoBehaviour
                     }
                     break;
                 default:
+                    agent.stoppingDistance = 0;
                     patrol.Patrol();
                     StartCoroutine(GetPath());
                     break;
@@ -157,6 +188,20 @@ public class EnemyAI : MonoBehaviour
     {
         alertState = 3;
         agent.SetDestination(pos);
+    }
+
+    void Arrived()
+    {
+        arrived = true;
+    }
+
+    void NotifyArrived()
+    {
+        arrived = true;
+        foreach (Transform enemy in otherEnemies)
+        {
+            enemy.SendMessage("Arrived");
+        }
     }
 
     IEnumerator LookCoroutine()
@@ -310,7 +355,7 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator GetPath()
     {
-        line.SetPosition(0, transform.position - Vector3.up); //set the line's origin
+        line.SetPosition(0, transform.position); //set the line's origin
 
         yield return null; //wait for the path to generate
 
