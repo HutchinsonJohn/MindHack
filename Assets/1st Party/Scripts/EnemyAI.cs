@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform target;
+    private Transform target;
     NavMeshAgent agent;
     private PatrolPath patrol;
     private FieldOfView fow;
@@ -57,20 +57,16 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         if (killed) {
+            //cancel all couroutine
             //dying animation/ragdoll, then the corresponding knock out effect (probably split up message into slept, killed, mindhacked)
         }
         else if (hacked) {
+            //cancel all coroutine
             //probably handle everything in player movement
         } else {
             Debug.Log(alertState);
             EnemyBehavior();
-            //if (agent.velocity.magnitude > 0.1)
-            //{
-            //    actions.Walk();
-            //} else
-            //{
-            //    actions.Stay();
-            //}
+
             animator.SetFloat("Speed", agent.velocity.magnitude);
         }
         
@@ -83,9 +79,10 @@ public class EnemyAI : MonoBehaviour
             playerSpotted = true;
             agent.SetDestination(fow.viewTarget.position);
             StartCoroutine(GetPath());
-            transform.LookAt(fow.viewTarget.position - Vector3.up);
+            transform.LookAt(fow.viewTarget.position);
             agent.stoppingDistance = 5;
             arrived = false;
+            patrol.OffPath();
             switch (alertState)
             {
                 case 0:
@@ -100,7 +97,7 @@ public class EnemyAI : MonoBehaviour
                         //play alert sound
                         agent.isStopped = true;
                         if (discoverCoroutine == null)
-                            discoverCoroutine = StartCoroutine(DiscoverCoroutine());
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(fow.viewTarget.position));
                     }
                     break;
                 case 1:
@@ -113,7 +110,7 @@ public class EnemyAI : MonoBehaviour
                         //play alert sound
                         agent.isStopped = true;
                         if (discoverCoroutine == null)
-                            discoverCoroutine = StartCoroutine(DiscoverCoroutine());
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(fow.viewTarget.position));
                     }
                     break;
                 case 2:
@@ -121,10 +118,17 @@ public class EnemyAI : MonoBehaviour
                     NotfiyOthers(fow.viewTarget.position);
                     break;
                 default:
-                    if (Vector3.Distance(transform.position, fow.viewTarget.position) < 9)
+                    if (Vector3.Distance(transform.position, fow.viewTarget.position) < 8)
                     {
-                        //pause, then walk towards
+                        actions.Aiming();
+                        agent.isStopped = true;
+
+                        //Shoot at every so many seconds
                         actions.Attack();
+                    } else
+                    {
+                        agent.isStopped = false;
+                        animator.SetBool("Aiming", false);
                     }
                     //engage
                     NotfiyOthers(fow.viewTarget.position);
@@ -134,6 +138,8 @@ public class EnemyAI : MonoBehaviour
         else
         {
             playerSpotted = false;
+            agent.isStopped = false;
+            animator.SetBool("Aiming", false);
             switch (alertState)
             {
                 case 1:
@@ -159,10 +165,11 @@ public class EnemyAI : MonoBehaviour
                         agent.stoppingDistance = 5;
                     } else
                     {
-                        agent.stoppingDistance = 0;
+                        agent.stoppingDistance = 1;
                     }
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
+                        NotifyArrived();
                         if (rotationCoroutine == null)
                             rotationCoroutine = StartCoroutine(LookCoroutine());
                     }
@@ -273,21 +280,24 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator SearchCoroutine()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 5f, default))
+        // Walks 5 meters forward, or to closest obstacle
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 5.5f, default))
         {
             float dist = Vector3.Distance(transform.position, hit.point);
             if (dist > 0.5f) {
-                agent.SetDestination(transform.position + transform.forward * dist);
+                agent.SetDestination(transform.position + transform.forward * (dist - .5f));
             }
         } else 
         {
             agent.SetDestination(transform.position + transform.forward * 5);
         }
         
+        // Waits for agent to arrive at destination
         while (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
         {
             yield return null;
         }
+
         Quaternion forward = transform.rotation;
         Vector3 euler = forward.eulerAngles;
         Quaternion left = Quaternion.Euler(euler.x, euler.y - turnAngle, euler.z);
@@ -341,11 +351,11 @@ public class EnemyAI : MonoBehaviour
         cautionCoroutine = null;
     }
 
-    IEnumerator DiscoverCoroutine()
+    IEnumerator DiscoverCoroutine(Vector3 pos)
     {
         yield return new WaitForSeconds(1);
         agent.isStopped = false;
-        NotfiyOthers(fow.viewTarget.position);
+        NotfiyOthers(pos);
         alertState = 3;
 
         discoverCoroutine = null;

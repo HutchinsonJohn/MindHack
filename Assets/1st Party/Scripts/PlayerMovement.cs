@@ -8,8 +8,9 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask lookPlane;
 
     private CharacterController controller;
-    private CharacterController playerController;
+    private CharacterController characterController;
     private CharacterController hackController;
+    private PlayerController playerController;
     private Animator animator;
     private Camera viewCamera;
     private Transform camTransform;
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     private float roomBottomLimit = -19.5f;
     private bool hacked;
     private float maxHackDuration = 10f;
+    private bool aiming;
 
     // Start is called before the first frame update
     void Start()
@@ -32,28 +34,67 @@ public class PlayerMovement : MonoBehaviour
         viewCamera = Camera.main;
         camTransform = viewCamera.transform;
         fow = GetComponent<FieldOfView>();
-        playerController = GetComponent<CharacterController>();
-        controller = playerController;
+        characterController = GetComponent<CharacterController>();
+        controller = characterController;
         transformTarget = transform;
         animator = GetComponent<Animator>();
+        playerController = GetComponent<PlayerController>();
+        playerController.SetArsenal("AK-74M");
     }
 
     // Update is called once per frame
     void Update()
     {
-        Movement();
-        Look();
+        // Toggles aim stance
+        if (Input.GetButtonDown("Fire2"))
+        {
+            if (aiming)
+            {
+                animator.SetBool("Aiming", false);
+                aiming = false;
+            } else
+            {
+                animator.SetFloat("Speed", 0f);
+                animator.SetBool("Aiming", true);
+                aiming = true;
+            }
+        }
+
+        if (!aiming)
+        {
+            Movement();
+            animator.SetFloat("Speed", characterController.velocity.magnitude);
+        } else
+        {
+            Look();
+            // if weapon is AK, alert all guards
+            if (Input.GetButtonDown("Fire1")) {
+                animator.SetTrigger("Attack");
+            }
+        }
         ThirdPersonCamera();
         fow.FindTarget();
-        Hack();
-        animator.SetFloat("Speed", playerController.velocity.magnitude);
+        Hack();        
     }
 
+    private float turnSpeed = 480f;
     private void Movement()
     {
         leftRightInput = Input.GetAxisRaw("Horizontal");
         forwardBackwardInput = Input.GetAxisRaw("Vertical");
-        controller.Move(new Vector3(leftRightInput, 0, forwardBackwardInput).normalized * moveSpeed * Time.deltaTime);
+        Vector3 moveDirection = new Vector3(leftRightInput, 0, forwardBackwardInput).normalized;
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        if (moveDirection.magnitude > 0)
+        {
+            Quaternion look = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                look,
+                turnSpeed * Time.deltaTime
+            );
+        }
+        
+        //transform.forward = new Vector3(leftRightInput, 0, forwardBackwardInput).normalized;
     }
 
     private void Look()
@@ -108,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndHack()
     {
-        controller = playerController;
+        controller = characterController;
         hacked = false;
         hackedTarget.SendMessage("Killed"); //Change to endhack later
         transformTarget = transform;
