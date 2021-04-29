@@ -20,15 +20,20 @@ public class EnemyAI : MonoBehaviour
     private bool hacked;
     private bool killed;
     private bool arrived;
+    private CharacterController characterController;
 
     Coroutine lookCoroutine;
     Coroutine searchCoroutine;
     Coroutine cautionCoroutine;
     Coroutine discoverCoroutine;
+    Coroutine shootingCoroutine;
 
     public Transform[] otherEnemies;
 
     private Transform lastSpotted;
+
+    private LayerMask enemyMask;
+    public LayerMask targetLayersMask;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +46,8 @@ public class EnemyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         playerController.SetArsenal("AK-74M");
+        enemyMask = LayerMask.NameToLayer("Enemy");
+        characterController = GameObject.Find("Player").GetComponent<CharacterController>();
     }
 
     void Hacked()
@@ -125,13 +132,21 @@ public class EnemyAI : MonoBehaviour
                     lastSpotted.SendMessage("Alerted");
                     if (Vector3.Distance(transform.position, lastSpotted.position) < 8)
                     {
-                        actions.Aiming();
-                        agent.isStopped = true;
+                        if (shootingCoroutine == null)
+                            shootingCoroutine = StartCoroutine(ShootingCoroutine());
+
+                        //actions.Aiming();
+                        //agent.isStopped = true;
 
                         //Shoot at every so many seconds
-                        actions.Attack();
+                        //actions.Attack();
                     } else
                     {
+                        if (shootingCoroutine != null)
+                        {
+                            StopCoroutine(shootingCoroutine);
+                            shootingCoroutine = null;
+                        }
                         agent.isStopped = false;
                         animator.SetBool("Aiming", false);
                     }
@@ -145,6 +160,12 @@ public class EnemyAI : MonoBehaviour
             playerSpotted = false;
             agent.isStopped = false;
             animator.SetBool("Aiming", false);
+            if (shootingCoroutine != null)
+            {
+                StopCoroutine(shootingCoroutine);
+                shootingCoroutine = null;
+            }
+
             switch (alertState)
             {
                 case 1:
@@ -193,6 +214,14 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when an enemy is at alertState 3, does nothing when a hacked enemy is spotted by another enemy
+    /// </summary>
+    void Alerted()
+    {
+
+    }
+
     void NotfiyOthers(Vector3 pos)
     {
         foreach (Transform enemy in otherEnemies)
@@ -212,8 +241,12 @@ public class EnemyAI : MonoBehaviour
 
     void Caution(Vector3 pos)
     {
-        if (cautionCoroutine == null)
-            cautionCoroutine = StartCoroutine(CautionCoroutine());
+        if (alertState == 0)
+        {
+            if (cautionCoroutine == null)
+                cautionCoroutine = StartCoroutine(CautionCoroutine());
+        }
+        
         agent.SetDestination(pos);
     }
 
@@ -231,9 +264,56 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+
+    Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+    private float movementShotSpreadCoefficient = 0.03f;
+    private float stationaryShotSpread = 0.05f;
+    private void Shoot()
+    {
+        if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
+        {
+            if (hit.transform.gameObject.layer != enemyMask)
+            {
+                animator.SetTrigger("Attack");
+                float shotSpread = characterController.velocity.magnitude * movementShotSpreadCoefficient + stationaryShotSpread;
+                if (Physics.Raycast(transform.position + gunHeight, transform.TransformDirection(new Vector3((1 - 2 * Random.value) * shotSpread, (1 - 2 * Random.value) * shotSpread, 1)), out hit, 100, targetLayersMask))
+                {
+                    if (hit.transform.name.Equals("Player"))
+                    {
+                        Debug.Log("hit");
+                    }
+                    
+                    //TODO: Send damage to player or enemy
+                }
+            }
+        }
+    }
+
+    IEnumerator ShootingCoroutine()
+    {
+        agent.isStopped = true;
+        animator.SetBool("Aiming", true);
+
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Aiming"))
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        Shoot();
+        yield return new WaitForSeconds(0.5f);
+        Shoot();
+        yield return new WaitForSeconds(0.5f);
+        Shoot();
+        yield return new WaitForSeconds(1f);
+
+        shootingCoroutine = null;
+    }
+
     IEnumerator RotationCoroutine(Quaternion lookTowards)
     {
-        while (Quaternion.Dot(transform.rotation, lookTowards) < 0.9999999f)
+        while (Mathf.Abs(Quaternion.Dot(transform.rotation, lookTowards)) < 0.9999999f)
         {
             if (playerSpotted)
             {
