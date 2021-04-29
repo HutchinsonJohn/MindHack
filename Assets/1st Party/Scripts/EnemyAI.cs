@@ -21,12 +21,14 @@ public class EnemyAI : MonoBehaviour
     private bool killed;
     private bool arrived;
 
-    Coroutine rotationCoroutine;
+    Coroutine lookCoroutine;
     Coroutine searchCoroutine;
     Coroutine cautionCoroutine;
     Coroutine discoverCoroutine;
 
     public Transform[] otherEnemies;
+
+    private Transform lastSpotted;
 
     // Start is called before the first frame update
     void Start()
@@ -44,27 +46,29 @@ public class EnemyAI : MonoBehaviour
     void Hacked()
     {
         hacked = true;
+        StopAllCoroutines();
+        // TODO: change layer
+        agent.isStopped = true;
     }
 
     void Killed()
     {
         killed = true;
+        StopAllCoroutines();
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
-        agent.SetDestination(transform.position); //This is so fucking stupid, but resetting the path does not guarantee that a path that was being generated wont continue to be generated and be set later
+        agent.isStopped = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (killed) {
-            //cancel all couroutine
             //dying animation/ragdoll, then the corresponding knock out effect (probably split up message into slept, killed, mindhacked)
         }
         else if (hacked) {
-            //cancel all coroutine
             //probably handle everything in player movement
         } else {
-            Debug.Log(alertState);
+            //Debug.Log(alertState);
             EnemyBehavior();
 
             animator.SetFloat("Speed", agent.velocity.magnitude);
@@ -77,16 +81,17 @@ public class EnemyAI : MonoBehaviour
         if (fow.FindTarget())
         {
             playerSpotted = true;
-            agent.SetDestination(fow.viewTarget.position);
+            lastSpotted = fow.viewTarget;
+            agent.SetDestination(lastSpotted.position);
             StartCoroutine(GetPath());
-            transform.LookAt(fow.viewTarget.position);
+            transform.LookAt(lastSpotted.position);
             agent.stoppingDistance = 5;
             arrived = false;
             patrol.OffPath();
             switch (alertState)
             {
                 case 0:
-                    if (Vector3.Distance(transform.position, fow.viewTarget.position) > 10)
+                    if (Vector3.Distance(transform.position, lastSpotted.position) > 10)
                     {
                         //pause, then walk towards
                         if (cautionCoroutine == null)
@@ -95,13 +100,12 @@ public class EnemyAI : MonoBehaviour
                     else
                     {
                         //play alert sound
-                        agent.isStopped = true;
                         if (discoverCoroutine == null)
-                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(fow.viewTarget.position));
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(lastSpotted.position));
                     }
                     break;
                 case 1:
-                    if (Vector3.Distance(transform.position, fow.viewTarget.position) > 10)
+                    if (Vector3.Distance(transform.position, lastSpotted.position) > 10)
                     {
                         //continute to destination
                     }
@@ -110,15 +114,16 @@ public class EnemyAI : MonoBehaviour
                         //play alert sound
                         agent.isStopped = true;
                         if (discoverCoroutine == null)
-                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(fow.viewTarget.position));
+                            discoverCoroutine = StartCoroutine(DiscoverCoroutine(lastSpotted.position));
                     }
                     break;
                 case 2:
                     alertState = 3;
-                    NotfiyOthers(fow.viewTarget.position);
+                    NotfiyOthers(lastSpotted.position);
                     break;
                 default:
-                    if (Vector3.Distance(transform.position, fow.viewTarget.position) < 8)
+                    lastSpotted.SendMessage("Alerted");
+                    if (Vector3.Distance(transform.position, lastSpotted.position) < 8)
                     {
                         actions.Aiming();
                         agent.isStopped = true;
@@ -146,8 +151,8 @@ public class EnemyAI : MonoBehaviour
                     agent.stoppingDistance = 0;
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
-                        if (rotationCoroutine == null)
-                            rotationCoroutine = StartCoroutine(LookCoroutine());
+                        if (lookCoroutine == null)
+                            lookCoroutine = StartCoroutine(LookCoroutine());
                     }
 
                     break;
@@ -160,6 +165,11 @@ public class EnemyAI : MonoBehaviour
                     break;
                 case 3:
                     //continue to destination, look around, then switch to searching state
+                    if (lastSpotted != null)
+                    {
+                        lastSpotted.SendMessage("Alerted");
+                    }
+                    
                     if (arrived)
                     {
                         agent.stoppingDistance = 5;
@@ -170,8 +180,8 @@ public class EnemyAI : MonoBehaviour
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
                         NotifyArrived();
-                        if (rotationCoroutine == null)
-                            rotationCoroutine = StartCoroutine(LookCoroutine());
+                        if (lookCoroutine == null)
+                            lookCoroutine = StartCoroutine(LookCoroutine());
                     }
                     break;
                 default:
@@ -193,7 +203,17 @@ public class EnemyAI : MonoBehaviour
 
     void Alert(Vector3 pos)
     {
-        alertState = 3;
+        if (!killed && !hacked) //&& not sleep
+        {  
+            alertState = 3;
+            agent.SetDestination(pos);
+        }
+    }
+
+    void Caution(Vector3 pos)
+    {
+        if (cautionCoroutine == null)
+            cautionCoroutine = StartCoroutine(CautionCoroutine());
         agent.SetDestination(pos);
     }
 
@@ -211,6 +231,35 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    IEnumerator RotationCoroutine(Quaternion lookTowards)
+    {
+        while (Quaternion.Dot(transform.rotation, lookTowards) < 0.9999999f)
+        {
+            if (playerSpotted)
+            {
+                if (lookCoroutine != null)
+                {
+                    StopCoroutine(lookCoroutine);
+                    lookCoroutine = null;
+                } else if (searchCoroutine != null) 
+                {
+                    StopCoroutine(searchCoroutine);
+                    searchCoroutine = null;
+                }
+                yield break;
+            }
+            // Rotate at a consistent speed toward the target.
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                lookTowards,
+                turnAngle * Time.deltaTime
+            );
+
+            // Wait a frame, then resume.
+            yield return null;
+        }
+    }
+
     IEnumerator LookCoroutine()
     {
         // Until our current rotation aligns with the target...
@@ -218,64 +267,21 @@ public class EnemyAI : MonoBehaviour
         Vector3 euler = forward.eulerAngles;
         Quaternion left = Quaternion.Euler(euler.x, euler.y - turnAngle, euler.z);
         Quaternion right = Quaternion.Euler(euler.x, euler.y + turnAngle, euler.z);
-        while (Quaternion.Dot(transform.rotation, right) < 1f)
-        {
-            if (playerSpotted)
-            {
-                rotationCoroutine = null;
-                yield break;
-            }
-            // Rotate at a consistent speed toward the target.
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                right,
-                turnAngle * Time.deltaTime
-            );
 
-            // Wait a frame, then resume.
-            yield return null;
-        }
+        yield return StartCoroutine(RotationCoroutine(right));
+
         yield return new WaitForSeconds(1);
-        while (Quaternion.Dot(transform.rotation, left) < 1f)
-        {
-            if (playerSpotted)
-            {
-                rotationCoroutine = null;
-                yield break;
-            }
-            // Rotate at a consistent speed toward the target.
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                left,
-                turnAngle * Time.deltaTime
-            );
 
-            // Wait a frame, then resume.
-            yield return null;
-        }
+        yield return StartCoroutine(RotationCoroutine(left));
+        
         yield return new WaitForSeconds(1);
-        while (Quaternion.Dot(transform.rotation, forward) < 1f)
-        {
-            if (playerSpotted)
-            {
-                rotationCoroutine = null;
-                yield break;
-            }
-            // Rotate at a consistent speed toward the target.
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                forward,
-                turnAngle * Time.deltaTime
-            );
 
-            // Wait a frame, then resume.
-            yield return null;
-        }
+        yield return StartCoroutine(RotationCoroutine(forward));
 
         alertState--;
         
         // Clear the coroutine so the next input starts a fresh one.
-        rotationCoroutine = null;
+        lookCoroutine = null;
     }
 
     IEnumerator SearchCoroutine()
@@ -295,6 +301,11 @@ public class EnemyAI : MonoBehaviour
         // Waits for agent to arrive at destination
         while (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
         {
+            if (playerSpotted)
+            {
+                searchCoroutine = null;
+                yield break;
+            }
             yield return null;
         }
 
@@ -302,41 +313,13 @@ public class EnemyAI : MonoBehaviour
         Vector3 euler = forward.eulerAngles;
         Quaternion left = Quaternion.Euler(euler.x, euler.y - turnAngle, euler.z);
         Quaternion right = Quaternion.Euler(euler.x, euler.y + turnAngle, euler.z);
-        while (Quaternion.Dot(transform.rotation, right) < 1f)
-        {
-            if (playerSpotted)
-            {
-                searchCoroutine = null;
-                yield break;
-            }
-            // Rotate at a consistent speed toward the target.
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                right,
-                turnAngle * Time.deltaTime
-            );
 
-            // Wait a frame, then resume.
-            yield return null;
-        }
+        yield return StartCoroutine(RotationCoroutine(right));
+
         yield return new WaitForSeconds(1);
-        while (Quaternion.Dot(transform.rotation, left) < 1f)
-        {
-            if (playerSpotted)
-            {
-                searchCoroutine = null;
-                yield break;
-            }
-            // Rotate at a consistent speed toward the target.
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                left,
-                turnAngle * Time.deltaTime
-            );
 
-            // Wait a frame, then resume.
-            yield return null;
-        }
+        yield return StartCoroutine(RotationCoroutine(left));
+
         yield return new WaitForSeconds(1);
         alertState = 0;
 
@@ -345,7 +328,9 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator CautionCoroutine()
     {
+        agent.isStopped = true;
         yield return new WaitForSeconds(1);
+        agent.isStopped = false;
         alertState = 1;
 
         cautionCoroutine = null;
@@ -353,6 +338,7 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator DiscoverCoroutine(Vector3 pos)
     {
+        agent.isStopped = true;
         yield return new WaitForSeconds(1);
         agent.isStopped = false;
         NotfiyOthers(pos);

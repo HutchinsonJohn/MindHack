@@ -11,12 +11,14 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController characterController;
     private CharacterController hackController;
     private PlayerController playerController;
-    private Animator animator;
+    private Animator playerAnimator;
     private Camera viewCamera;
     private Transform camTransform;
     private FieldOfView fow;
     private Transform transformTarget; //Transform the camera should follow, either hacked enemy or player
     private Transform hackedTarget;
+    private Animator animatorTarget;
+    private GameObject[] enemies;
 
     // Variables
     private float leftRightInput, forwardBackwardInput;
@@ -27,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private bool hacked;
     private float maxHackDuration = 10f;
     private bool aiming;
+    private bool alerted;
 
     // Start is called before the first frame update
     void Start()
@@ -37,9 +40,11 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         controller = characterController;
         transformTarget = transform;
-        animator = GetComponent<Animator>();
+        playerAnimator = GetComponent<Animator>();
+        animatorTarget = playerAnimator;
         playerController = GetComponent<PlayerController>();
         playerController.SetArsenal("AK-74M");
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
     // Update is called once per frame
@@ -50,12 +55,12 @@ public class PlayerMovement : MonoBehaviour
         {
             if (aiming)
             {
-                animator.SetBool("Aiming", false);
+                animatorTarget.SetBool("Aiming", false);
                 aiming = false;
             } else
             {
-                animator.SetFloat("Speed", 0f);
-                animator.SetBool("Aiming", true);
+                animatorTarget.SetFloat("Speed", 0f);
+                animatorTarget.SetBool("Aiming", true);
                 aiming = true;
             }
         }
@@ -63,18 +68,46 @@ public class PlayerMovement : MonoBehaviour
         if (!aiming)
         {
             Movement();
-            animator.SetFloat("Speed", characterController.velocity.magnitude);
+            animatorTarget.SetFloat("Speed", controller.velocity.magnitude);
         } else
         {
             Look();
             // if weapon is AK, alert all guards
+
             if (Input.GetButtonDown("Fire1")) {
-                animator.SetTrigger("Attack");
+                animatorTarget.SetTrigger("Attack");
+
+                if (hacked)
+                {
+                    transformTarget.gameObject.layer = LayerMask.NameToLayer("Player");
+                }
+
+                // TODO: if ak
+                if (true)
+                {
+                    foreach (GameObject enemy in enemies)
+                    {
+                        enemy.SendMessage("Caution", transformTarget.position);
+                    }
+                }
             }
         }
         ThirdPersonCamera();
         fow.FindTarget();
-        Hack();        
+        //Hack();        
+    }
+
+    private void LateUpdate()
+    {
+        if (!alerted)
+        {
+            Hack();
+        } else if (hacked)
+        {
+            EndHack();
+        }
+        
+        alerted = false;
     }
 
     private float turnSpeed = 480f;
@@ -87,8 +120,8 @@ public class PlayerMovement : MonoBehaviour
         if (moveDirection.magnitude > 0)
         {
             Quaternion look = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
+            transformTarget.rotation = Quaternion.RotateTowards(
+                transformTarget.rotation,
                 look,
                 turnSpeed * Time.deltaTime
             );
@@ -116,6 +149,11 @@ public class PlayerMovement : MonoBehaviour
         camTransform.LookAt(transformTarget);
     }
 
+    private void Alerted()
+    {
+        alerted = true;
+    }
+
     private void Hack()
     {
         bool hackHeld = Input.GetButton("Hack");
@@ -123,19 +161,25 @@ public class PlayerMovement : MonoBehaviour
         //change to hold until circle meter full to hack, .5 second to hack and unhack
         bool targetFound = fow.FindIndirectTarget();
         //draw hack target reticle
-        Debug.Log("hackDown: " + hackDown + ", hacked: " + hacked + ", targetFound: " + targetFound);
+        //Debug.Log("hackDown: " + hackDown + ", hacked: " + hacked + ", targetFound: " + targetFound);
         if (hackDown && !hacked)
         {
             if (targetFound)
             {
+                animatorTarget.SetFloat("Speed", 0f);
+                animatorTarget.SetBool("Squat", true);
+
                 hackedTarget = fow.hackTarget;
                 transformTarget = hackedTarget;
                 hackedTarget.SendMessage("Hacked");
 
                 //could make this one line
                 hackController = hackedTarget.GetComponent<CharacterController>();
-                controller = hackController; 
+                controller = hackController;
 
+                animatorTarget = hackedTarget.GetComponent<Animator>();
+
+                aiming = false;
                 hacked = true;
                 StartCoroutine(HackedCoroutine());
             }
@@ -149,10 +193,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndHack()
     {
+        //Die (potential TODO: change to ragdoll)
+        if (animatorTarget.GetCurrentAnimatorStateInfo(0).IsName("Death"))
+            animatorTarget.Play("Idle", 0);
+        else
+            animatorTarget.SetTrigger("Death");
+        // TODO: change enemy layer
+
         controller = characterController;
         hacked = false;
-        hackedTarget.SendMessage("Killed"); //Change to endhack later
+        hackedTarget.SendMessage("Killed"); //TODO: Change to endhack
         transformTarget = transform;
+        animatorTarget = playerAnimator;
+        animatorTarget.SetBool("Squat", false);
+        aiming = false;
     }
 
     IEnumerator HackedCoroutine()
