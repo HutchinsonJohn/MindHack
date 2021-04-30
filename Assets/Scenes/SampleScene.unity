@@ -7372,6 +7372,9 @@ MonoBehaviour:
   lookPlane:
     serializedVersion: 2
     m_Bits: 256
+  targetLayersMask:
+    serializedVersion: 2
+    m_Bits: 513
 --- !u!143 &3906777737800829572
 CharacterController:
   m_ObjectHideFlags: 0

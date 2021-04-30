@@ -31,6 +31,10 @@ public class PlayerMovement : MonoBehaviour
     private bool aiming;
     private bool alerted;
     private bool rifleEquipped;
+    Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+
+    public LayerMask targetLayersMask;
+    private LayerMask enemyMask;
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         playerController.SetArsenal("Pistol");
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemyMask = LayerMask.NameToLayer("Enemy");
     }
 
     // Update is called once per frame
@@ -86,8 +91,7 @@ public class PlayerMovement : MonoBehaviour
         } else
         {
             Look();
-            // if weapon is AK, alert all guards
-            //if rifleEquipped || hacked
+
             if (Input.GetButtonDown("Fire1")) {
                 animatorTarget.SetTrigger("Attack");
 
@@ -96,8 +100,23 @@ public class PlayerMovement : MonoBehaviour
                     transformTarget.gameObject.layer = LayerMask.NameToLayer("Player");
                 }
 
-                // TODO: if ak
-                if (true)
+                if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
+                {
+                    if (hit.transform.gameObject.layer == enemyMask)
+                    {
+                        if (rifleEquipped || hacked)
+                        {
+                            hit.transform.SendMessage("Killed");
+                        } else
+                        {
+                            // TODO: change to slept
+                            hit.transform.SendMessage("Killed");
+                        }
+                        
+                    }
+                }
+
+                if (rifleEquipped || hacked)
                 {
                     foreach (GameObject enemy in enemies)
                     {
@@ -140,8 +159,6 @@ public class PlayerMovement : MonoBehaviour
                 turnSpeed * Time.deltaTime
             );
         }
-        
-        //transform.forward = new Vector3(leftRightInput, 0, forwardBackwardInput).normalized;
     }
 
     private void Look()

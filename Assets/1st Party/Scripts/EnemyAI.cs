@@ -50,6 +50,9 @@ public class EnemyAI : MonoBehaviour
         characterController = GameObject.Find("Player").GetComponent<CharacterController>();
     }
 
+    /// <summary>
+    /// While being controlled by the player
+    /// </summary>
     void Hacked()
     {
         hacked = true;
@@ -58,12 +61,32 @@ public class EnemyAI : MonoBehaviour
         agent.isStopped = true;
     }
 
+    /// <summary>
+    /// After player is done controlling enemy
+    /// </summary>
+    void MindHacked()
+    {
+
+    }
+
+    /// <summary>
+    /// If player shoots with pistol
+    /// </summary>
+    void Slept()
+    {
+
+    }
+
+    /// <summary>
+    /// If player shoots with AK
+    /// </summary>
     void Killed()
     {
         killed = true;
         StopAllCoroutines();
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
         agent.isStopped = true;
+        actions.Death();
     }
 
     // Update is called once per frame
@@ -83,6 +106,9 @@ public class EnemyAI : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Handles enemy behavior according to alert state and if the player is in view
+    /// </summary>
     private void EnemyBehavior()
     {
         if (fow.FindTarget())
@@ -222,6 +248,10 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Alerts all other enemies of the players location
+    /// </summary>
+    /// <param name="pos">Position of the player</param>
     void NotfiyOthers(Vector3 pos)
     {
         foreach (Transform enemy in otherEnemies)
@@ -230,31 +260,56 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called by other enemies when the player is spotted in alertState 3, sets destination to player and alertState = 3
+    /// </summary>
+    /// <param name="pos">Position of the player</param>
     void Alert(Vector3 pos)
     {
         if (!killed && !hacked) //&& not sleep
-        {  
-            alertState = 3;
+        {
+            if (alertState < 2)
+            {
+                if (discoverCoroutine == null)
+                    discoverCoroutine = StartCoroutine(DiscoverCoroutine(pos));
+            } else
+            {
+                alertState = 3;
+                agent.SetDestination(pos);
+            }
+            
+        }
+    }
+
+    /// <summary>
+    /// Called if the player shoots an unsuppressed weapon, sets destination to player and starts caution routine if alertState == 0
+    /// </summary>
+    /// <param name="pos">Position of the player</param>
+    void Caution(Vector3 pos)
+    {
+        if (!killed && !hacked) //&& not sleep
+        {
+            if (alertState == 0)
+            {
+                if (cautionCoroutine == null)
+                    cautionCoroutine = StartCoroutine(CautionCoroutine());
+            }
+
             agent.SetDestination(pos);
         }
     }
 
-    void Caution(Vector3 pos)
-    {
-        if (alertState == 0)
-        {
-            if (cautionCoroutine == null)
-                cautionCoroutine = StartCoroutine(CautionCoroutine());
-        }
-        
-        agent.SetDestination(pos);
-    }
-
+    /// <summary>
+    /// Sets arrived = true
+    /// </summary>
     void Arrived()
     {
         arrived = true;
     }
 
+    /// <summary>
+    /// Sets arrived to true for all enemies
+    /// </summary>
     void NotifyArrived()
     {
         arrived = true;
@@ -268,6 +323,9 @@ public class EnemyAI : MonoBehaviour
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
     private float movementShotSpreadCoefficient = 0.03f;
     private float stationaryShotSpread = 0.05f;
+    /// <summary>
+    /// Handles individual shots and hit registration
+    /// </summary>
     private void Shoot()
     {
         if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
@@ -289,6 +347,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles enemy shooting pattern
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ShootingCoroutine()
     {
         agent.isStopped = true;
@@ -311,6 +373,11 @@ public class EnemyAI : MonoBehaviour
         shootingCoroutine = null;
     }
 
+    /// <summary>
+    /// Rotates towards lookTowards over time
+    /// </summary>
+    /// <param name="lookTowards">The desired final look direction</param>
+    /// <returns></returns>
     IEnumerator RotationCoroutine(Quaternion lookTowards)
     {
         while (Mathf.Abs(Quaternion.Dot(transform.rotation, lookTowards)) < 0.9999999f)
@@ -340,6 +407,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles enemy look in place behavior
+    /// </summary>
+    /// <returns></returns>
     IEnumerator LookCoroutine()
     {
         // Until our current rotation aligns with the target...
@@ -364,6 +435,10 @@ public class EnemyAI : MonoBehaviour
         lookCoroutine = null;
     }
 
+    /// <summary>
+    /// Handles enemy move and look behavior
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SearchCoroutine()
     {
         // Walks 5 meters forward, or to closest obstacle
@@ -406,23 +481,31 @@ public class EnemyAI : MonoBehaviour
         searchCoroutine = null;
     }
 
+    /// <summary>
+    /// Handles enemy pause on caution behavior
+    /// </summary>
+    /// <returns></returns>
     IEnumerator CautionCoroutine()
     {
         agent.isStopped = true;
+        alertState = 1;
         yield return new WaitForSeconds(1);
         agent.isStopped = false;
-        alertState = 1;
 
         cautionCoroutine = null;
     }
 
+    /// <summary>
+    /// Handles enemy discovery pause behavior
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     IEnumerator DiscoverCoroutine(Vector3 pos)
     {
         agent.isStopped = true;
+        alertState = 3;
         yield return new WaitForSeconds(1);
         agent.isStopped = false;
-        NotfiyOthers(pos);
-        alertState = 3;
 
         discoverCoroutine = null;
     }
