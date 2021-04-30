@@ -2594,10 +2594,10 @@ MonoBehaviour:
     rightGun: {fileID: 0}
     leftGun: {fileID: 0}
     controller: {fileID: 9100000, guid: e4d38f097ea35254fb4b833d568bb089, type: 2}
-  - name: Sniper Rifle
-    rightGun: {fileID: 100000, guid: 5928b07c18727fe47acb7df646f608ef, type: 3}
+  - name: Pistol
+    rightGun: {fileID: 0}
     leftGun: {fileID: 0}
-    controller: {fileID: 9100000, guid: dffbd9326394a8d47a87a1e2aec70a59, type: 2}
+    controller: {fileID: 9100000, guid: 8bbca7fa0e7d6cf45b625c38120c55a4, type: 2}
   - name: AK-74M
     rightGun: {fileID: 100000, guid: 4d9b132573d0584439c28e583cfce43d, type: 3}
     leftGun: {fileID: 0}
@@ -5391,7 +5391,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh39476
+  m_Name: pb_Mesh14956
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6359,10 +6359,10 @@ MonoBehaviour:
     rightGun: {fileID: 0}
     leftGun: {fileID: 0}
     controller: {fileID: 9100000, guid: e4d38f097ea35254fb4b833d568bb089, type: 2}
-  - name: Sniper Rifle
-    rightGun: {fileID: 100000, guid: 5928b07c18727fe47acb7df646f608ef, type: 3}
+  - name: Pistol
+    rightGun: {fileID: 0}
     leftGun: {fileID: 0}
-    controller: {fileID: 9100000, guid: dffbd9326394a8d47a87a1e2aec70a59, type: 2}
+    controller: {fileID: 9100000, guid: 8bbca7fa0e7d6cf45b625c38120c55a4, type: 2}
   - name: AK-74M
     rightGun: {fileID: 100000, guid: 4d9b132573d0584439c28e583cfce43d, type: 3}
     leftGun: {fileID: 0}
@@ -8211,10 +8211,11 @@ MonoBehaviour:
     rightGun: {fileID: 0}
     leftGun: {fileID: 0}
     controller: {fileID: 9100000, guid: e4d38f097ea35254fb4b833d568bb089, type: 2}
-  - name: Sniper Rifle
-    rightGun: {fileID: 100000, guid: 5928b07c18727fe47acb7df646f608ef, type: 3}
+  - name: Pistol
+    rightGun: {fileID: 132968113830612173, guid: 4179b5873348cdb4da5148b582a0cd42,
+      type: 3}
     leftGun: {fileID: 0}
-    controller: {fileID: 9100000, guid: dffbd9326394a8d47a87a1e2aec70a59, type: 2}
+    controller: {fileID: 9100000, guid: 8bbca7fa0e7d6cf45b625c38120c55a4, type: 2}
   - name: AK-74M
     rightGun: {fileID: 100000, guid: 4d9b132573d0584439c28e583cfce43d, type: 3}
     leftGun: {fileID: 0}

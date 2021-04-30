@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private float maxHackDuration = 10f;
     private bool aiming;
     private bool alerted;
+    private bool rifleEquipped;
 
     // Start is called before the first frame update
     void Start()
@@ -43,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
         animatorTarget = playerAnimator;
         playerController = GetComponent<PlayerController>();
-        playerController.SetArsenal("AK-74M");
+        playerController.SetArsenal("Pistol");
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
@@ -65,6 +66,19 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (Input.GetButtonDown("Switch") && !hacked)
+        {
+            if (rifleEquipped)
+            {
+                playerController.SetArsenal("Pistol");
+                rifleEquipped = false;
+            } else
+            {
+                playerController.SetArsenal("AK-74M");
+                rifleEquipped = true;
+            }
+        }
+
         if (!aiming)
         {
             Movement();
@@ -73,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Look();
             // if weapon is AK, alert all guards
-
+            //if rifleEquipped || hacked
             if (Input.GetButtonDown("Fire1")) {
                 animatorTarget.SetTrigger("Attack");
 
@@ -158,9 +172,9 @@ public class PlayerMovement : MonoBehaviour
     {
         bool hackHeld = Input.GetButton("Hack");
         bool hackDown = Input.GetButtonDown("Hack");
-        //change to hold until circle meter full to hack, .5 second to hack and unhack
+        // TODO: change to hold until circle meter full to hack, .5 second to hack and unhack
         bool targetFound = fow.FindIndirectTarget();
-        //draw hack target reticle
+        // TODO: draw hack target reticle
         //Debug.Log("hackDown: " + hackDown + ", hacked: " + hacked + ", targetFound: " + targetFound);
         if (hackDown && !hacked)
         {
