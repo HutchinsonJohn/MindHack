@@ -30,8 +30,12 @@ public class PlayerMovement : MonoBehaviour
     private float maxHackDuration = 10f;
     private bool aiming;
     private bool alerted;
-    private bool rifleEquipped;
+    public bool rifleEquipped;
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+
+    public int killedEnemies = 0;
+    public int sleptEnemies = 0;
+    public int hackedEnemies = 0;
 
     public LayerMask targetLayersMask;
     private LayerMask enemyMask;
@@ -48,7 +52,15 @@ public class PlayerMovement : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
         animatorTarget = playerAnimator;
         playerController = GetComponent<PlayerController>();
-        playerController.SetArsenal("Pistol");
+        rifleEquipped = PlayerPrefs.GetInt("RifleEquipped") == 1;
+        if (rifleEquipped)
+        {
+            playerController.SetArsenal("AK-74M");
+        }
+        else
+        {
+            playerController.SetArsenal("Pistol");
+        }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         enemyMask = LayerMask.NameToLayer("Enemy");
     }
@@ -113,10 +125,12 @@ public class PlayerMovement : MonoBehaviour
                         if (rifleEquipped || hacked)
                         {
                             hit.transform.SendMessage("Killed");
+                            killedEnemies++;
                         } else
                         {
                             // TODO: change to slept
                             hit.transform.SendMessage("Killed");
+                            sleptEnemies++;
                         }
                         
                     }
@@ -218,6 +232,7 @@ public class PlayerMovement : MonoBehaviour
 
                 aiming = false;
                 hacked = true;
+                hackedEnemies++;
                 StartCoroutine(HackedCoroutine());
             }
         } else if (hackDown && hacked)
