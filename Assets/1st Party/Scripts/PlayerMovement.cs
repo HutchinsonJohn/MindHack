@@ -70,8 +70,9 @@ public class PlayerMovement : MonoBehaviour
                 aiming = false;
             } else
             {
-                animatorTarget.SetFloat("Speed", 0f);
+                
                 animatorTarget.SetBool("Aiming", true);
+                animatorTarget.SetFloat("Speed", 0f);
                 aiming = true;
             }
         }

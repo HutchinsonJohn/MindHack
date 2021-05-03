@@ -65,7 +65,11 @@ public class PatrolPath : MonoBehaviour
             listPosition = 0;
         }
         isWaiting = false;
-        agent.SetDestination(patrolPoints[listPosition].position);
+        if (!offPath)
+        {
+            agent.SetDestination(patrolPoints[listPosition].position);
+        }
+        
     }
 
     public void OffPath()
