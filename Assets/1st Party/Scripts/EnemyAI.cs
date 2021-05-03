@@ -17,8 +17,10 @@ public class EnemyAI : MonoBehaviour
     private float shootingDistance = 5f;
     private bool playerSpotted;
     private float turnAngle = 75f;
-    private bool hacked;
-    private bool killed;
+    private bool hacked; //Currently controlled by player
+    public bool killed;
+    public bool slept;
+    public bool mindHacked; //No longer controller by player
     private bool arrived;
     private CharacterController characterController;
 
