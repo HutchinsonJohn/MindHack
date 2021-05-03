@@ -25,7 +25,9 @@ public class PlayerMovement : MonoBehaviour
     private float distance = 7f; //camera distance from player, more accurately its height times sin(cameraAngle)
     private float moveSpeed = 5f;
     private float cameraAngle = 45f;
-    private float roomBottomLimit = -19.5f;
+    public float roomBottomLimit = -19.5f;
+    public float roomLeftLimit = .5f;
+    public float roomRightLimit = 24.5f;
     private bool hacked;
     private float maxHackDuration = 10f;
     private bool aiming;
@@ -196,6 +198,7 @@ public class PlayerMovement : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(cameraAngle, 0, 0);
         Vector3 pos = transformTarget.position + rotation * dir;
         pos.z = Mathf.Max(pos.z, roomBottomLimit);
+        pos.x = Mathf.Max(roomLeftLimit, Mathf.Min(pos.x, roomRightLimit));
         camTransform.position = pos;
         camTransform.LookAt(transformTarget);
     }
