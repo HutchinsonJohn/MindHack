@@ -97,7 +97,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Look();
 
-            if (Input.GetButtonDown("Fire1")) {
+            if (Input.GetButtonDown("Fire1")&& animatorTarget.GetCurrentAnimatorStateInfo(0).IsName("Aiming"))
+            {
                 animatorTarget.SetTrigger("Attack");
 
                 if (hacked)
