@@ -118,11 +118,11 @@ public class EnemyAI : MonoBehaviour
             playerSpotted = true;
             lastSpotted = fow.viewTarget;
             agent.SetDestination(lastSpotted.position);
-            StartCoroutine(GetPath());
             transform.LookAt(lastSpotted.position);
             agent.stoppingDistance = 5;
             arrived = false;
             patrol.OffPath();
+            //StartCoroutine(GetPath()); //Debug
             switch (alertState)
             {
                 case 0:
@@ -236,7 +236,6 @@ public class EnemyAI : MonoBehaviour
                 default:
                     agent.stoppingDistance = 0;
                     patrol.Patrol();
-                    StartCoroutine(GetPath());
                     break;
             }
         }
