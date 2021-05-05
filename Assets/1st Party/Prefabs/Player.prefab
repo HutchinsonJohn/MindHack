@@ -1753,7 +1753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewRadius: 15
-  hackRadius: 10
+  hackRadius: 5
   viewAngle: 60
   targetMask:
     serializedVersion: 2

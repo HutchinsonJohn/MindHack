@@ -101,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
                 playerController.SetArsenal("AK-74M");
                 rifleEquipped = true;
             }
+            aiming = false;
         }
 
         if (!aiming)
@@ -203,7 +204,6 @@ public class PlayerMovement : MonoBehaviour
         {
             pos.z = roomBottomLimit;
             float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) - pos.y + transformTarget.position.y;
-            Debug.Log(x);
             pos.y += x;
         }
         

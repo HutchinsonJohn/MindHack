@@ -270,16 +270,30 @@ public class EnemyAI : MonoBehaviour
     {
         if (!killed && !hacked) //&& not sleep
         {
+            if (lookCoroutine != null)
+            {
+                StopCoroutine(lookCoroutine);
+                lookCoroutine = null;
+            }
+            else if (searchCoroutine != null)
+            {
+                StopCoroutine(searchCoroutine);
+                searchCoroutine = null;
+            }
             if (alertState < 2)
             {
                 if (discoverCoroutine == null)
                     discoverCoroutine = StartCoroutine(DiscoverCoroutine(pos));
-            } else
+            }
+            else
             {
                 alertState = 3;
-                agent.SetDestination(pos);
             }
-            
+            agent.SetDestination(pos);
+            if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
+            {
+                transform.LookAt(pos);
+            }
         }
     }
 
