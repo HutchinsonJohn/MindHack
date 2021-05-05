@@ -59,8 +59,8 @@ public class EnemyAI : MonoBehaviour
     {
         hacked = true;
         StopAllCoroutines();
-        // TODO: change layer
         agent.isStopped = true;
+        agent.enabled = false;
     }
 
     /// <summary>
@@ -88,6 +88,7 @@ public class EnemyAI : MonoBehaviour
         StopAllCoroutines();
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
         agent.isStopped = true;
+        agent.enabled = false;
         actions.Death();
     }
 

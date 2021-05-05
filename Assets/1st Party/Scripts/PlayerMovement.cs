@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Variables
     private float leftRightInput, forwardBackwardInput;
-    private float distance = 7f; //camera distance from player, more accurately its height times sin(cameraAngle)
+    private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle)
     private float moveSpeed = 5f;
     private float cameraAngle = 45f;
     public float roomBottomLimit = -19.5f;
@@ -120,8 +120,9 @@ public class PlayerMovement : MonoBehaviour
                     transformTarget.gameObject.layer = LayerMask.NameToLayer("Player");
                 }
 
-                if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
+                if (Physics.Raycast(transformTarget.position + gunHeight, transformTarget.forward, out RaycastHit hit, 100, targetLayersMask))
                 {
+                    
                     if (hit.transform.gameObject.layer == enemyMask)
                     {
                         if (rifleEquipped || hacked)
@@ -197,8 +198,15 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(cameraAngle, 0, 0);
         Vector3 pos = transformTarget.position + rotation * dir;
-        pos.z = Mathf.Max(pos.z, roomBottomLimit);
         pos.x = Mathf.Max(roomLeftLimit, Mathf.Min(pos.x, roomRightLimit));
+        if (pos.z < roomBottomLimit)
+        {
+            pos.z = roomBottomLimit;
+            float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) - pos.y + transformTarget.position.y;
+            Debug.Log(x);
+            pos.y += x;
+        }
+        
         camTransform.position = pos;
         camTransform.LookAt(transformTarget);
     }
