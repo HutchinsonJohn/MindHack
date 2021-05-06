@@ -199,15 +199,26 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(cameraAngle, 0, 0);
         Vector3 pos = transformTarget.position + rotation * dir;
-        pos.x = Mathf.Max(roomLeftLimit, Mathf.Min(pos.x, roomRightLimit));
-        if (pos.z < roomBottomLimit)
+        if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, targetLayersMask))
         {
-            pos.z = roomBottomLimit;
-            float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) - pos.y + transformTarget.position.y;
-            pos.y += x;
+            pos.z = hit.point.z + .25f;
+            float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) + transformTarget.position.y;
+            pos.y = x;
         }
-        
-        camTransform.position = pos;
+
+        pos.x = Mathf.Max(roomLeftLimit, Mathf.Min(pos.x, roomRightLimit));
+
+        //if (pos.z < roomBottomLimit)
+        //{
+        //    pos.z = roomBottomLimit;
+        //    float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) + transformTarget.position.y;
+        //    pos.y = x;
+        //}
+
+        Vector3 smooth = Vector3.Lerp(camTransform.position, pos, 5 * Time.deltaTime);
+        smooth.x = pos.x;
+        camTransform.position = smooth;
+
         camTransform.LookAt(transformTarget);
     }
 

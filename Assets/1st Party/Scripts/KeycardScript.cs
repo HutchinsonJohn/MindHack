@@ -15,7 +15,10 @@ public class KeycardScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        enemyAI = attachedToEnemy.GetComponent<EnemyAI>();
+        if (isAttachedToEnemy)
+        {
+            enemyAI = attachedToEnemy.GetComponent<EnemyAI>();
+        }
     }
 
     // Update is called once per frame
