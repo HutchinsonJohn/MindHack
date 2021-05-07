@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1126587051254542832}
   - component: {fileID: 1126587051253543728}
   - component: {fileID: 5378072591256182763}
+  - component: {fileID: 937842979736835818}
   m_Layer: 0
   m_Name: Door_Right
   m_TagString: Untagged
@@ -94,6 +95,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300002, guid: eca90685bd7c0e14c985891ef5c0a3f3, type: 3}
+--- !u!208 &937842979736835818
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126587051255737840}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.009000001, y: 0.127, z: 0.09200001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.25
 --- !u!1 &1126587051255737842
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +217,7 @@ GameObject:
   - component: {fileID: 1126587051254542838}
   - component: {fileID: 1126587051253543734}
   - component: {fileID: 5378072591950812947}
+  - component: {fileID: 3034492843195587692}
   m_Layer: 0
   m_Name: Door_Left
   m_TagString: Untagged
@@ -282,6 +300,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: eca90685bd7c0e14c985891ef5c0a3f3, type: 3}
+--- !u!208 &3034492843195587692
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126587051255737846}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.087000005, y: 1.269, z: 0.93200004}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.008, y: -0.15, z: -0.36900002}
+  m_TimeToStationary: 0.25
 --- !u!1 &1126587051255737848
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,3 +365,4 @@ MonoBehaviour:
   doorTrigger: {fileID: 0}
   leftDoor: {fileID: 1126587051255312854}
   rightDoor: {fileID: 1126587051255312848}
+  player: {fileID: 0}

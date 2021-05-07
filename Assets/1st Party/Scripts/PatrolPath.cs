@@ -14,6 +14,7 @@ public class PatrolPath : MonoBehaviour
     private bool isWaiting;
     private bool offPath;
     private float turnSpeed = 180f;
+    private EnemyAI enemyAI;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,7 @@ public class PatrolPath : MonoBehaviour
         {
             throw new System.ArgumentException("Patrol Points, Pause Times, and Look Directions must have same length");
         }
+        enemyAI = GetComponent<EnemyAI>();
         agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(patrolPoints[listPosition].position);
     }
@@ -65,7 +67,7 @@ public class PatrolPath : MonoBehaviour
             listPosition = 0;
         }
         isWaiting = false;
-        if (!offPath)
+        if (!offPath && !enemyAI.killed)
         {
             agent.SetDestination(patrolPoints[listPosition].position);
         }

@@ -8,6 +8,7 @@ public class DoorTrigger : MonoBehaviour
     public Transform doorTrigger;
     public Transform leftDoor;
     public Transform rightDoor;
+    public Transform player;
     private float doorOpenDistanceSqr = 25f;
     private float openDistance;
     private Vector3 leftStart;
@@ -15,6 +16,7 @@ public class DoorTrigger : MonoBehaviour
     private Vector3 leftEnd;
     private Vector3 rightEnd;
     private Vector3 distanceToMove = new Vector3(0, 0, 2);
+    private bool alerted;
 
     // Start is called before the first frame update
     void Start()
@@ -23,12 +25,14 @@ public class DoorTrigger : MonoBehaviour
         rightStart = rightDoor.position;
         leftEnd = leftStart + distanceToMove;
         rightEnd = rightStart - distanceToMove;
+        alerted = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.SqrMagnitude(doorTrigger.position - transform.position) < doorOpenDistanceSqr)
+        alerted = player.GetComponent<PlayerMovement>().alerted;
+        if (Vector3.SqrMagnitude(doorTrigger.position - transform.position) < doorOpenDistanceSqr && !alerted)
         {
             if (openDistance < 1f)
             {

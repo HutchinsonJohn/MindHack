@@ -13,16 +13,16 @@ public class EnemyAI : MonoBehaviour
     private Animator animator;
     private PlayerController playerController;
     private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
-    private float engageDistance = 10f;
-    private float shootingDistance = 5f;
+    private float engageDistance = 7f;
     private bool playerSpotted;
     private float turnAngle = 75f;
     private bool hacked; //Currently controlled by player
     public bool killed;
-    public bool slept;
-    public bool mindHacked; //No longer controller by player
     private bool arrived;
     private CharacterController characterController;
+
+    public GameObject sleepText;
+    public GameObject mindHackedText;
 
     Coroutine lookCoroutine;
     Coroutine searchCoroutine;
@@ -59,7 +59,6 @@ public class EnemyAI : MonoBehaviour
     {
         hacked = true;
         StopAllCoroutines();
-        agent.isStopped = true;
         agent.enabled = false;
     }
 
@@ -68,7 +67,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void MindHacked()
     {
-
+        mindHackedText.SetActive(true);
+        Killed();
     }
 
     /// <summary>
@@ -76,7 +76,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void Slept()
     {
-
+        sleepText.SetActive(true);
+        Killed();
     }
 
     /// <summary>
@@ -87,7 +88,6 @@ public class EnemyAI : MonoBehaviour
         killed = true;
         StopAllCoroutines();
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
-        agent.isStopped = true;
         agent.enabled = false;
         actions.Death();
     }
@@ -127,7 +127,7 @@ public class EnemyAI : MonoBehaviour
             switch (alertState)
             {
                 case 0:
-                    if (Vector3.Distance(transform.position, lastSpotted.position) > 10)
+                    if (Vector3.Distance(transform.position, lastSpotted.position) > engageDistance)
                     {
                         //pause, then walk towards
                         if (cautionCoroutine == null)
@@ -141,7 +141,7 @@ public class EnemyAI : MonoBehaviour
                     }
                     break;
                 case 1:
-                    if (Vector3.Distance(transform.position, lastSpotted.position) > 10)
+                    if (Vector3.Distance(transform.position, lastSpotted.position) > engageDistance)
                     {
                         //continute to destination
                     }
@@ -159,7 +159,7 @@ public class EnemyAI : MonoBehaviour
                     break;
                 default:
                     lastSpotted.SendMessage("Alerted");
-                    if (Vector3.Distance(transform.position, lastSpotted.position) < 8)
+                    if (Vector3.Distance(transform.position, lastSpotted.position) < engageDistance)
                     {
                         if (shootingCoroutine == null)
                             shootingCoroutine = StartCoroutine(ShootingCoroutine());
@@ -240,6 +240,7 @@ public class EnemyAI : MonoBehaviour
                     break;
             }
         }
+        StartCoroutine(GetPath()); //Debug
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ public class KeycardScript : MonoBehaviour
         transform.Rotate(0, Time.deltaTime * 100f, 0);
         if (isAttachedToEnemy)
         {
-            if (enemyAI.killed || enemyAI.slept || enemyAI.mindHacked)
+            if (enemyAI.killed)
             {
                 isAttachedToEnemy = false;
                 transform.position = new Vector3(transform.position.x, curve.Evaluate(Time.time % curve.length) / 2 + 1.5f, transform.position.z);

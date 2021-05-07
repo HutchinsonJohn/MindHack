@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private bool hacked;
     private float maxHackDuration = 10f;
     private bool aiming;
-    private bool alerted;
+    public bool alerted;
     public bool rifleEquipped;
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
 
@@ -132,8 +132,7 @@ public class PlayerMovement : MonoBehaviour
                             killedEnemies++;
                         } else
                         {
-                            // TODO: change to slept
-                            hit.transform.SendMessage("Killed");
+                            hit.transform.SendMessage("Slept");
                             sleptEnemies++;
                         }
                         
@@ -151,7 +150,6 @@ public class PlayerMovement : MonoBehaviour
         }
         ThirdPersonCamera();
         fow.FindTarget();
-        //Hack();        
     }
 
     private void LateUpdate()
@@ -276,7 +274,7 @@ public class PlayerMovement : MonoBehaviour
 
         controller = characterController;
         hacked = false;
-        hackedTarget.SendMessage("Killed"); //TODO: Change to endhack
+        hackedTarget.SendMessage("MindHacked");
         transformTarget = transform;
         animatorTarget = playerAnimator;
         animatorTarget.SetBool("Squat", false);
