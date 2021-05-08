@@ -12,6 +12,8 @@ public class TutorialScript : MonoBehaviour
     public GameObject textBox;
     public TMP_Text promptText;
     private int activePromptIndex = -1;
+    public GameObject eString;
+    public GameObject hackString;
     private string[] messages =
         {"Agent, your mission is to reach the heart of Synaum HQ. You are to do so by any means necessary. Use your rifle and suppressed tranquilizer to complete the mission.",
         "A... mind hacking device? Agent, it's imperative that you complete the mission. Use this technology against them at your discretion.",
@@ -32,6 +34,11 @@ public class TutorialScript : MonoBehaviour
         {
             if (activePromptIndex != -1)
             {
+                if (activePromptIndex == 1)
+                {
+                    eString.SetActive(true);
+                    hackString.SetActive(true);
+                }
                 StopAllCoroutines();
                 promptText.gameObject.SetActive(false);
                 textBox.SetActive(false);
