@@ -177,7 +177,7 @@ public class PlayerMovement : MonoBehaviour
         leftRightInput = Input.GetAxisRaw("Horizontal");
         forwardBackwardInput = Input.GetAxisRaw("Vertical");
         Vector3 moveDirection = new Vector3(leftRightInput, 0, forwardBackwardInput).normalized;
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        controller.SimpleMove(moveDirection * moveSpeed);
         if (moveDirection.magnitude > 0)
         {
             Quaternion look = Quaternion.LookRotation(moveDirection);

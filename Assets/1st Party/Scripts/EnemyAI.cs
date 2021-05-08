@@ -242,7 +242,15 @@ public class EnemyAI : MonoBehaviour
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
                         if (lookCoroutine == null)
+                        {
+                            if (searchCoroutine != null)
+                            {
+                                StopCoroutine(searchCoroutine);
+                                searchCoroutine = null;
+                            }
                             lookCoroutine = StartCoroutine(LookCoroutine());
+                        }
+                            
                     }
 
                     break;
@@ -251,7 +259,14 @@ public class EnemyAI : MonoBehaviour
                     arrived = false;
                     //look around the area, then resume patrol
                     if (searchCoroutine == null)
+                    {
+                        if (lookCoroutine != null)
+                        {
+                            StopCoroutine(lookCoroutine);
+                            lookCoroutine = null;
+                        }
                         searchCoroutine = StartCoroutine(SearchCoroutine());
+                    }
                     break;
                 case 3:
                     //continue to destination, look around, then switch to searching state
@@ -271,7 +286,14 @@ public class EnemyAI : MonoBehaviour
                     {
                         NotifyArrived();
                         if (lookCoroutine == null)
+                        {
+                            if (searchCoroutine != null)
+                            {
+                                StopCoroutine(searchCoroutine);
+                                searchCoroutine = null;
+                            }
                             lookCoroutine = StartCoroutine(LookCoroutine());
+                        }
                     }
                     break;
                 default:
