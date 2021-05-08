@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     private float engageDistance = 7f;
     private bool playerSpotted;
     private float turnAngle = 75f;
-    private bool hacked; //Currently controlled by player
+    public bool hacked; //Currently controlled by player
     public bool killed;
     private bool arrived;
     private CharacterController characterController;
@@ -36,6 +36,9 @@ public class EnemyAI : MonoBehaviour
 
     private LayerMask enemyMask;
     public LayerMask targetLayersMask;
+
+    private bool hackable;
+    public GameObject hackCanvas;
 
     // Start is called before the first frame update
     void Start()
@@ -67,8 +70,13 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void MindHacked()
     {
-        mindHackedText.SetActive(true);
+        Invoke(nameof(MindHackedText), 3.5f);
         Killed();
+    }
+
+    void MindHackedText()
+    {
+        mindHackedText.SetActive(true);
     }
 
     /// <summary>
@@ -76,8 +84,13 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void Slept()
     {
-        sleepText.SetActive(true);
+        Invoke(nameof(SleptText), 3.5f);
         Killed();
+    }
+
+    void SleptText()
+    {
+        sleepText.SetActive(true);
     }
 
     /// <summary>
@@ -107,6 +120,23 @@ public class EnemyAI : MonoBehaviour
             animator.SetFloat("Speed", agent.velocity.magnitude);
         }
         
+    }
+
+    public void Hackable()
+    {
+        hackable = true;
+    }
+
+    private void LateUpdate()
+    {
+        if (hackable)
+        {
+            hackCanvas.SetActive(true);
+        } else
+        {
+            hackCanvas.SetActive(false);
+        }
+        hackable = false;
     }
 
     /// <summary>

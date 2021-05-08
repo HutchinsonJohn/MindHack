@@ -1733,6 +1733,7 @@ MonoBehaviour:
   roomBottomLimit: -19.5
   roomLeftLimit: 0.5
   roomRightLimit: 24.5
+  alerted: 0
   rifleEquipped: 0
   killedEnemies: 0
   sleptEnemies: 0
@@ -1740,6 +1741,9 @@ MonoBehaviour:
   targetLayersMask:
     serializedVersion: 2
     m_Bits: 513
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!114 &990457387539349793
 MonoBehaviour:
   m_ObjectHideFlags: 0

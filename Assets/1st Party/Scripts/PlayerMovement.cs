@@ -34,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
     public bool alerted;
     public bool rifleEquipped;
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+    public Vector3 lookAt;
+    public float hackMeter;
 
     public int killedEnemies = 0;
     public int sleptEnemies = 0;
@@ -41,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask targetLayersMask;
     private LayerMask enemyMask;
+    public LayerMask obstacleMask;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +68,8 @@ public class PlayerMovement : MonoBehaviour
         }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         enemyMask = LayerMask.NameToLayer("Enemy");
+        //obstacleMask = LayerMask.NameToLayer("Default");
+        ThirdPersonCamera();
     }
 
     // Update is called once per frame
@@ -108,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Movement();
             animatorTarget.SetFloat("Speed", controller.velocity.magnitude);
+            Look();
         } else
         {
             Look();
@@ -187,9 +193,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Ray mousePos = viewCamera.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(mousePos, out RaycastHit hit, lookPlane);
-        Vector3 lookAt = new Vector3(hit.point.x, transformTarget.position.y, hit.point.z);
+        lookAt = new Vector3(hit.point.x, transformTarget.position.y, hit.point.z);
         //Debug.DrawLine(transform.position, lookAt, Color.red);
-        transformTarget.LookAt(lookAt);
+        if (aiming)
+        {
+            transformTarget.LookAt(lookAt);
+        }
     }
 
     private void ThirdPersonCamera()
@@ -197,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(cameraAngle, 0, 0);
         Vector3 pos = transformTarget.position + rotation * dir;
-        if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, targetLayersMask))
+        if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, obstacleMask))
         {
             pos.z = hit.point.z + .25f;
             float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) + transformTarget.position.y;
@@ -229,14 +238,24 @@ public class PlayerMovement : MonoBehaviour
     {
         bool hackHeld = Input.GetButton("Hack");
         bool hackDown = Input.GetButtonDown("Hack");
-        // TODO: change to hold until circle meter full to hack, .5 second to hack and unhack
-        bool targetFound = fow.FindIndirectTarget();
-        // TODO: draw hack target reticle
-        //Debug.Log("hackDown: " + hackDown + ", hacked: " + hacked + ", targetFound: " + targetFound);
-        if (hackDown && !hacked)
+
+        if (hacked)
         {
-            if (targetFound)
+            if (hackDown)
             {
+                EndHack();
+            }
+            return;
+        }
+
+        // TODO: change to hold until circle meter full to hack, .5 second to hack and unhack
+        bool targetFound = fow.FindIndirectTarget(lookAt);
+        if (targetFound)
+        {
+            if (hackMeter > 0.5f)
+            {
+                hackMeter = 0;
+
                 animatorTarget.SetFloat("Speed", 0f);
                 animatorTarget.SetBool("Squat", true);
 
@@ -255,12 +274,22 @@ public class PlayerMovement : MonoBehaviour
                 hackedEnemies++;
                 StartCoroutine(HackedCoroutine());
             }
-        } else if (hackDown && hacked)
+            else
+            {
+                if (hackHeld)
+                {
+                    hackMeter += Time.deltaTime;
+                }
+                else
+                {
+                    hackMeter = 0;
+                }
+                fow.hackTarget.GetComponent<EnemyAI>().SendMessage("Hackable");
+            }
+        } else
         {
-            EndHack();
+            hackMeter = 0;
         }
-        
-        
     }
 
     private void EndHack()

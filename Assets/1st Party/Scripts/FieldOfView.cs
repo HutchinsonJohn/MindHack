@@ -41,7 +41,7 @@ public class FieldOfView : MonoBehaviour
         return (viewTarget != null);
     }
 
-    public bool FindIndirectTarget()
+    public bool FindIndirectTarget(Vector3 lookAt)
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, hackRadius, targetMask);
         hackTarget = null;
@@ -50,7 +50,7 @@ public class FieldOfView : MonoBehaviour
         {
             Transform target = targetsInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            float angleBetweenTargetAndLook = Vector3.Angle(transform.forward, dirToTarget);
+            float angleBetweenTargetAndLook = Vector3.Angle(lookAt - transform.position, dirToTarget);
             if (angleBetweenTargetAndLook < viewAngle / 2 && angleBetweenTargetAndLook < lowestAngle)
             {
                 hackTarget = target;

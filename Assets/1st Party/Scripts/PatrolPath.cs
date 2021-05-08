@@ -9,7 +9,7 @@ public class PatrolPath : MonoBehaviour
     public Transform[] patrolPoints;
     public float[] patrolPauseTimes;
     public float[] lookDirections;
-    public NavMeshAgent agent;
+    private NavMeshAgent agent;
     private int listPosition;
     private bool isWaiting;
     private bool offPath;
@@ -67,7 +67,7 @@ public class PatrolPath : MonoBehaviour
             listPosition = 0;
         }
         isWaiting = false;
-        if (!offPath && !enemyAI.killed)
+        if (!offPath && !enemyAI.killed && !enemyAI.hacked)
         {
             agent.SetDestination(patrolPoints[listPosition].position);
         }
