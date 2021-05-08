@@ -38,6 +38,7 @@ public class EnemyAI : MonoBehaviour
     public LayerMask targetLayersMask;
 
     private bool hackable;
+    private bool wasHackable;
     public GameObject hackCanvas;
 
     // Start is called before the first frame update
@@ -131,10 +132,19 @@ public class EnemyAI : MonoBehaviour
     {
         if (hackable)
         {
-            hackCanvas.SetActive(true);
+            if (!wasHackable)
+            {
+                hackCanvas.SetActive(true);
+            }
+            wasHackable = true;
+            
         } else
         {
-            hackCanvas.SetActive(false);
+            if (wasHackable)
+            {
+                hackCanvas.SetActive(false);
+            }
+            wasHackable = false;
         }
         hackable = false;
     }
