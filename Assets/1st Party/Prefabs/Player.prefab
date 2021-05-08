@@ -1735,6 +1735,8 @@ MonoBehaviour:
   roomRightLimit: 24.5
   alerted: 0
   rifleEquipped: 0
+  lookAt: {x: 0, y: 0, z: 0}
+  hackMeter: 0
   killedEnemies: 0
   sleptEnemies: 0
   hackedEnemies: 0
@@ -1758,7 +1760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewRadius: 15
   hackRadius: 5
-  viewAngle: 60
+  viewAngle: 90
   targetMask:
     serializedVersion: 2
     m_Bits: 512

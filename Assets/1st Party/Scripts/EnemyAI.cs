@@ -13,7 +13,7 @@ public class EnemyAI : MonoBehaviour
     private Animator animator;
     private PlayerController playerController;
     private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
-    private float engageDistance = 7f;
+    private float engageDistance = 6f;
     private bool playerSpotted;
     private float turnAngle = 75f;
     public bool hacked; //Currently controlled by player
