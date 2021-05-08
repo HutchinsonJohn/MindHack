@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PauseMenu.GameIsPaused)
         {
+            animatorTarget.SetFloat("Speed", 0f);
             return;
         }
 
