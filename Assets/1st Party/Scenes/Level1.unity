@@ -620,12 +620,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 061299b3ee9991848a1a484bc119a9b5, type: 3}
---- !u!1 &99786129 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5744880465798714982, guid: 061299b3ee9991848a1a484bc119a9b5,
-    type: 3}
-  m_PrefabInstance: {fileID: 99786128}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &135965354
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,7 +921,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triggerFlag: 2
-  tutorialCanvas: {fileID: 1683111691}
+  tutorialScript: {fileID: 1683111696}
 --- !u!65 &224938165
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2005,7 +1999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triggerFlag: 4
-  tutorialCanvas: {fileID: 1683111691}
+  tutorialScript: {fileID: 1683111696}
 --- !u!65 &476188566
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8530,7 +8524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triggerFlag: 0
-  tutorialCanvas: {fileID: 1683111691}
+  tutorialScript: {fileID: 1683111696}
 --- !u!1 &1471863061
 GameObject:
   m_ObjectHideFlags: 0
@@ -9143,7 +9137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50816a42da1f4d489a33f449638f722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCanvas: {fileID: 99786129}
+  pauseMenu: {fileID: 0}
   textBox: {fileID: 1167938704}
   promptText: {fileID: 579024616}
   eString: {fileID: 356135703}
@@ -11585,7 +11579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triggerFlag: 1
-  tutorialCanvas: {fileID: 1683111691}
+  tutorialScript: {fileID: 1683111696}
 --- !u!65 &1915880364
 BoxCollider:
   m_ObjectHideFlags: 0

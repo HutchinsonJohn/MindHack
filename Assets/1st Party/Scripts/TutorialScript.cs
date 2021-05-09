@@ -6,8 +6,7 @@ using TMPro;
 public class TutorialScript : MonoBehaviour
 {
 
-    public GameObject gameCanvas;
-    private PauseMenu pauseMenu;
+    public PauseMenu pauseMenu;
     private bool[] flags = new bool[5];
     public GameObject textBox;
     public TMP_Text promptText;
@@ -20,12 +19,6 @@ public class TutorialScript : MonoBehaviour
         "A locked door... You must find a way through. Maybe there is a keycard around here...",
         "It seems the device also serves as an authentication key for the door...",
         "Once you are through that door, the communications signal will break and you'll be on your own. Good luck, Agent."};
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        pauseMenu = gameCanvas.GetComponent<PauseMenu>();
-    }
 
     // Update is called once per frame
     void Update()

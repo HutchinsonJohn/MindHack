@@ -6,13 +6,7 @@ public class DialogTrigger : MonoBehaviour
 {
 
     public int triggerFlag;
-    public GameObject tutorialCanvas;
-    private TutorialScript tutorialScript;
-
-    private void Start()
-    {
-        tutorialScript = tutorialCanvas.GetComponent<TutorialScript>();
-    }
+    public TutorialScript tutorialScript;
 
     private void OnTriggerEnter(Collider other)
     {

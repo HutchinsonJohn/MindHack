@@ -30,7 +30,7 @@ public class EnemyAI : MonoBehaviour
     Coroutine discoverCoroutine;
     Coroutine shootingCoroutine;
 
-    public Transform[] otherEnemies;
+    private GameObject[] allEnemies;
 
     private Transform lastSpotted;
 
@@ -54,6 +54,7 @@ public class EnemyAI : MonoBehaviour
         playerController.SetArsenal("AK-74M");
         enemyMask = LayerMask.NameToLayer("Enemy");
         characterController = GameObject.Find("Player").GetComponent<CharacterController>();
+        allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
     /// <summary>
@@ -195,7 +196,7 @@ public class EnemyAI : MonoBehaviour
                     break;
                 case 2:
                     alertState = 3;
-                    NotfiyOthers(lastSpotted.position);
+                    NotifyOthers(lastSpotted.position);
                     break;
                 default:
                     lastSpotted.SendMessage("Alerted");
@@ -220,7 +221,7 @@ public class EnemyAI : MonoBehaviour
                         animator.SetBool("Aiming", false);
                     }
                     //engage
-                    NotfiyOthers(fow.viewTarget.position);
+                    NotifyOthers(fow.viewTarget.position);
                     break;
             }
         }
@@ -238,7 +239,7 @@ public class EnemyAI : MonoBehaviour
             switch (alertState)
             {
                 case 1:
-                    agent.stoppingDistance = 0;
+                    agent.stoppingDistance = 1;
                     if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
                     {
                         if (lookCoroutine == null)
@@ -255,7 +256,7 @@ public class EnemyAI : MonoBehaviour
 
                     break;
                 case 2:
-                    agent.stoppingDistance = 0;
+                    agent.stoppingDistance = 1;
                     arrived = false;
                     //look around the area, then resume patrol
                     if (searchCoroutine == null)
@@ -317,9 +318,9 @@ public class EnemyAI : MonoBehaviour
     /// Alerts all other enemies of the players location
     /// </summary>
     /// <param name="pos">Position of the player</param>
-    void NotfiyOthers(Vector3 pos)
+    void NotifyOthers(Vector3 pos)
     {
-        foreach (Transform enemy in otherEnemies)
+        foreach (GameObject enemy in allEnemies)
         {
             enemy.SendMessage("Alert", pos);
         }
@@ -391,8 +392,7 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void NotifyArrived()
     {
-        arrived = true;
-        foreach (Transform enemy in otherEnemies)
+        foreach (GameObject enemy in allEnemies)
         {
             enemy.SendMessage("Arrived");
         }
