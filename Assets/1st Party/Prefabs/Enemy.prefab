@@ -925,13 +925,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae797b0006f96424dbea1711f4656e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  alertState: 0
   hacked: 0
   killed: 0
   sleepText: {fileID: 3513487848924122977}
   mindHackedText: {fileID: 5023685194181694120}
   targetLayersMask:
     serializedVersion: 2
-    m_Bits: 1537
+    m_Bits: 34305
   hackCanvas: {fileID: 3474615292355193555}
 --- !u!114 &7592274990481381007
 MonoBehaviour:

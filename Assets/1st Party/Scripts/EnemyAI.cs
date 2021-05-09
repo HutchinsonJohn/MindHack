@@ -207,18 +207,28 @@ public class EnemyAI : MonoBehaviour
                     lastSpotted.SendMessage("Alerted");
                     if (Vector3.Distance(transform.position, lastSpotted.position) < engageDistance)
                     {
-                        if (shootingCoroutine == null && discoverCoroutine == null)
-                            shootingCoroutine = StartCoroutine(ShootingCoroutine());
+                        if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
+                        {
+                            if (hit.transform.name.Equals("Player"))
+                            {
+                                if (shootingCoroutine == null && discoverCoroutine == null)
+                                {
+                                    shootingCoroutine = StartCoroutine(ShootingCoroutine());
+                                }
+                            }
+                            else
+                            {
+                                StopShooting();
+                            }
+                        }
+                        else
+                        {
+                            StopShooting();
+                        }
 
                     } else
                     {
-                        if (shootingCoroutine != null)
-                        {
-                            StopCoroutine(shootingCoroutine);
-                            shootingCoroutine = null;
-                        }
-                        agent.isStopped = false;
-                        animator.SetBool("Aiming", false);
+                        StopShooting();
                     }
                     //engage
                     NotifyOthers(fow.viewTarget.position);
@@ -229,12 +239,7 @@ public class EnemyAI : MonoBehaviour
         {
             playerSpotted = false;
             //agent.isStopped = false;
-            animator.SetBool("Aiming", false);
-            if (shootingCoroutine != null)
-            {
-                StopCoroutine(shootingCoroutine);
-                shootingCoroutine = null;
-            }
+            StopShooting();
 
             switch (alertState)
             {
@@ -420,11 +425,23 @@ public class EnemyAI : MonoBehaviour
                     if (hit.transform.name.Equals("Player"))
                     {
                         hit.transform.SendMessage("Hit");
+                    } else if (hit.transform.tag == "Enemy")
+                    {
+                        hit.transform.SendMessage("Killed");
                     }
-                    
-                    //TODO: Send damage to player or enemy
                 }
             }
+        }
+    }
+
+    private void StopShooting()
+    {
+        if (shootingCoroutine != null)
+        {
+            StopCoroutine(shootingCoroutine);
+            shootingCoroutine = null;
+            agent.isStopped = false;
+            animator.SetBool("Aiming", false);
         }
     }
 
