@@ -228,7 +228,7 @@ public class EnemyAI : MonoBehaviour
         else
         {
             playerSpotted = false;
-            agent.isStopped = false;
+            //agent.isStopped = false;
             animator.SetBool("Aiming", false);
             if (shootingCoroutine != null)
             {
@@ -354,6 +354,7 @@ public class EnemyAI : MonoBehaviour
                 alertState = 3;
             }
             agent.SetDestination(pos);
+            patrol.OffPath();
             if (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
             {
                 transform.LookAt(pos);
@@ -376,6 +377,7 @@ public class EnemyAI : MonoBehaviour
             }
 
             agent.SetDestination(pos);
+            patrol.OffPath();
         }
     }
 

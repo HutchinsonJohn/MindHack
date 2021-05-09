@@ -43,12 +43,15 @@ public class PatrolPath : MonoBehaviour
             agent.SetDestination(patrolPoints[listPosition].position);
         } else if (isWaiting)
         {
-            Quaternion look = Quaternion.Euler(0, lookDirections[listPosition], 0);
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                look,
-                turnSpeed * Time.deltaTime
-            );
+            if (lookDirections[listPosition] != -1)
+            {
+                Quaternion look = Quaternion.Euler(0, lookDirections[listPosition], 0);
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    look,
+                    turnSpeed * Time.deltaTime
+                );
+            }
             return;
         }
         if (!agent.hasPath)
