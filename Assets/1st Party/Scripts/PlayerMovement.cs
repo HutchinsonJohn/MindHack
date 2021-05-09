@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Variables
     private float leftRightInput, forwardBackwardInput;
-    private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle)
+    private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
     private float moveSpeed = 5f;
     private float cameraAngle = 45f;
     public float roomBottomLimit = -19.5f;
@@ -40,6 +40,11 @@ public class PlayerMovement : MonoBehaviour
     public int killedEnemies = 0;
     public int sleptEnemies = 0;
     public int hackedEnemies = 0;
+
+    private int health = 10000; //5 is max health
+    private float regenCooldown = 0f;
+    private bool isDying;
+    private GameObject gameOverCanvas;
 
     public LayerMask targetLayersMask;
     private LayerMask enemyMask;
@@ -68,17 +73,36 @@ public class PlayerMovement : MonoBehaviour
         }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         enemyMask = LayerMask.NameToLayer("Enemy");
-        //obstacleMask = LayerMask.NameToLayer("Default");
+        gameOverCanvas = GameObject.Find("GameOver"); //Could avoid doing this by creating prefab with player and game canvas in one
+        gameOverCanvas.SetActive(false);
         ThirdPersonCamera();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (isDying)
+        {
+            return;
+        }
+
         if (PauseMenu.GameIsPaused)
         {
             animatorTarget.SetFloat("Speed", 0f);
             return;
+        }
+
+        if (health < 5)
+        {
+            if (regenCooldown <= 0f)
+            {
+                health++;
+                regenCooldown = 1f;
+            }
+            else
+            {
+                regenCooldown -= Time.deltaTime;
+            }
         }
 
         // Toggles aim stance
@@ -309,6 +333,29 @@ public class PlayerMovement : MonoBehaviour
         animatorTarget = playerAnimator;
         animatorTarget.SetBool("Squat", false);
         aiming = false;
+    }
+
+    private void Hit()
+    {
+        if (hacked)
+        {
+            EndHack();
+        } else
+        {
+            health--;
+            regenCooldown = 3f;
+        }
+        if (health < 1 && !isDying)
+        {
+            isDying = true;
+            playerAnimator.SetTrigger("Death");
+            Invoke(nameof(GameOver), 3.5f);
+        }
+    }
+
+    private void GameOver()
+    {
+        gameOverCanvas.SetActive(true);
     }
 
     IEnumerator HackedCoroutine()

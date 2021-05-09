@@ -202,14 +202,9 @@ public class EnemyAI : MonoBehaviour
                     lastSpotted.SendMessage("Alerted");
                     if (Vector3.Distance(transform.position, lastSpotted.position) < engageDistance)
                     {
-                        if (shootingCoroutine == null)
+                        if (shootingCoroutine == null && discoverCoroutine == null)
                             shootingCoroutine = StartCoroutine(ShootingCoroutine());
 
-                        //actions.Aiming();
-                        //agent.isStopped = true;
-
-                        //Shoot at every so many seconds
-                        //actions.Attack();
                     } else
                     {
                         if (shootingCoroutine != null)
@@ -417,7 +412,7 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (hit.transform.name.Equals("Player"))
                     {
-                        Debug.Log("hit");
+                        hit.transform.SendMessage("Hit");
                     }
                     
                     //TODO: Send damage to player or enemy
