@@ -10,6 +10,7 @@ public class TutorialScript : MonoBehaviour
     private bool[] flags = new bool[5];
     public GameObject textBox;
     public TMP_Text promptText;
+    public GameObject controls;
     private int activePromptIndex = -1;
     public GameObject eString;
     public GameObject hackString;
@@ -23,7 +24,7 @@ public class TutorialScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (activePromptIndex != -1)
             {
@@ -44,6 +45,16 @@ public class TutorialScript : MonoBehaviour
             } else
             {
                 activePromptIndex = -1;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (PauseMenu.GameIsPaused) //Pausing occurs on LateUpdate, so this looks at the value before the pause occurs
+            {
+                controls.SetActive(true);
+            } else
+            {
+                controls.SetActive(false);
             }
         }
     }

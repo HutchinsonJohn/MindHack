@@ -9152,6 +9152,7 @@ MonoBehaviour:
   pauseMenu: {fileID: 99786129}
   textBox: {fileID: 1167938704}
   promptText: {fileID: 579024616}
+  controls: {fileID: 605505255}
   eString: {fileID: 356135703}
   hackString: {fileID: 1652639808}
 --- !u!43 &1705573458
@@ -13813,42 +13814,42 @@ PrefabInstance:
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.4
+      value: 7.364061
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -19
+      value: -11.86396
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 7290897312610347305, guid: ef9b64d63333bda42abe9a7a2bbee604,
         type: 3}
