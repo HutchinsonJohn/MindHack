@@ -7,7 +7,7 @@ public class TutorialScript : MonoBehaviour
 {
 
     public PauseMenu pauseMenu;
-    private bool[] flags = new bool[5];
+    private bool[] flags = new bool[6];
     public GameObject textBox;
     public TMP_Text promptText;
     public GameObject controls;
@@ -15,11 +15,12 @@ public class TutorialScript : MonoBehaviour
     public GameObject eString;
     public GameObject hackString;
     private string[] messages =
-        {"Agent, your mission is to reach the heart of Synaum HQ. You are to do so by any means necessary. Use your rifle and suppressed tranquilizer to complete the mission.",
+        {"Agent, your mission is to reach the heart of Synaum HQ. You are to do so by any means necessary.",
         "A... mind hacking device? Agent, it's imperative that you complete the mission. Use this technology against them at your discretion.",
         "A locked door... You must find a way through. Maybe there is a keycard around here...",
         "It seems the device also serves as an authentication key for the door...",
-        "Once you are through that door, the communications signal will break and you'll be on your own. Good luck, Agent."};
+        "Once you are through that door, the communications signal will break and you'll be on your own. Good luck, Agent.",
+        "Use your rifle and suppressed tranquilizer to complete the mission. Remember, your tranquilizer isn't effective if the enemy has spotted you."};
 
     // Update is called once per frame
     void Update()
@@ -42,10 +43,14 @@ public class TutorialScript : MonoBehaviour
             if (activePromptIndex == 1 && flags[2])
             {
                 StartCoroutine("TextCoroutine", 3);
+            } else if (activePromptIndex == 0)
+            {
+                StartCoroutine("TextCoroutine", 5);
             } else
             {
                 activePromptIndex = -1;
             }
+
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {

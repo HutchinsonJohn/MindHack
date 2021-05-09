@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController characterController;
     private CharacterController hackController;
     private PlayerController playerController;
+    private Actions actions;
     private Animator playerAnimator;
     private Camera viewCamera;
     private Transform camTransform;
@@ -41,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     public int sleptEnemies = 0;
     public int hackedEnemies = 0;
 
-    private int health = 10000; //5 is max health
+    private int health = 5; //5 is max health
     private float regenCooldown = 0f;
     private bool isDying;
     private GameObject gameOverCanvas;
@@ -59,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         controller = characterController;
         transformTarget = transform;
+        actions = GetComponent<Actions>();
         playerAnimator = GetComponent<Animator>();
         animatorTarget = playerAnimator;
         playerController = GetComponent<PlayerController>();
@@ -80,6 +82,11 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+
+    private void LateUpdate()
     {
         if (isDying)
         {
@@ -112,7 +119,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 animatorTarget.SetBool("Aiming", false);
                 aiming = false;
-            } else
+            }
+            else
             {
                 animatorTarget.SetBool("Aiming", true);
                 animatorTarget.SetFloat("Speed", 0f);
@@ -126,7 +134,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 playerController.SetArsenal("Pistol");
                 rifleEquipped = false;
-            } else
+            }
+            else
             {
                 playerController.SetArsenal("AK-74M");
                 rifleEquipped = true;
@@ -139,11 +148,12 @@ public class PlayerMovement : MonoBehaviour
             Movement();
             animatorTarget.SetFloat("Speed", controller.velocity.magnitude);
             Look();
-        } else
+        }
+        else
         {
             Look();
 
-            if (Input.GetButtonDown("Fire1")&& animatorTarget.GetCurrentAnimatorStateInfo(0).IsName("Aiming"))
+            if (Input.GetButtonDown("Fire1") && animatorTarget.GetCurrentAnimatorStateInfo(0).IsName("Aiming"))
             {
                 animatorTarget.SetTrigger("Attack");
 
@@ -154,19 +164,25 @@ public class PlayerMovement : MonoBehaviour
 
                 if (Physics.Raycast(transformTarget.position + gunHeight, transformTarget.forward, out RaycastHit hit, 100, targetLayersMask))
                 {
-                    
+
                     if (hit.transform.gameObject.layer == enemyMask)
                     {
                         if (rifleEquipped || hacked)
                         {
                             hit.transform.SendMessage("Killed");
                             killedEnemies++;
-                        } else
-                        {
-                            hit.transform.SendMessage("Slept");
-                            sleptEnemies++;
                         }
-                        
+                        else
+                        {
+                            if (alerted)
+                            {
+                                hit.transform.SendMessage("Damage");
+                            } else
+                            {
+                                hit.transform.SendMessage("Slept");
+                                sleptEnemies++;
+                            }
+                        }
                     }
                 }
 
@@ -181,10 +197,7 @@ public class PlayerMovement : MonoBehaviour
         }
         ThirdPersonCamera();
         fow.FindTarget();
-    }
 
-    private void LateUpdate()
-    {
         if (!alerted)
         {
             Hack();
@@ -344,6 +357,7 @@ public class PlayerMovement : MonoBehaviour
         {
             health--;
             regenCooldown = 3f;
+            actions.Damage();
         }
         if (health < 1 && !isDying)
         {

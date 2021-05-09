@@ -95,6 +95,11 @@ public class EnemyAI : MonoBehaviour
         sleepText.SetActive(true);
     }
 
+    void Damage()
+    {
+        actions.Damage();
+    }
+
     /// <summary>
     /// If player shoots with AK
     /// </summary>
