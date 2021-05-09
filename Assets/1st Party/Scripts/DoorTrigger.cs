@@ -21,8 +21,8 @@ public class DoorTrigger : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        leftStart = leftDoor.position;
-        rightStart = rightDoor.position;
+        leftStart = leftDoor.localPosition;
+        rightStart = rightDoor.localPosition;
         leftEnd = leftStart + distanceToMove;
         rightEnd = rightStart - distanceToMove;
         alerted = false;
@@ -32,20 +32,20 @@ public class DoorTrigger : MonoBehaviour
     void Update()
     {
         alerted = player.GetComponent<PlayerMovement>().alerted;
-        if (Vector3.SqrMagnitude(doorTrigger.position - transform.position) < doorOpenDistanceSqr && !alerted)
+        if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr && !alerted)
         {
             if (openDistance < 1f)
             {
                 openDistance += Time.deltaTime;
                 Mathf.Min(openDistance, 1f);
-                leftDoor.position = Vector3.Lerp(leftStart, leftEnd, openDistance);
-                rightDoor.position = Vector3.Lerp(rightStart, rightEnd, openDistance);
+                leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);
+                rightDoor.localPosition = Vector3.Lerp(rightStart, rightEnd, openDistance);
             }
         } else if (openDistance > 0f) {
             openDistance -= Time.deltaTime;
             Mathf.Max(openDistance, 0f);
-            leftDoor.position = Vector3.Lerp(leftStart, leftEnd, openDistance);
-            rightDoor.position = Vector3.Lerp(rightStart, rightEnd, openDistance);
+            leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);
+            rightDoor.localPosition = Vector3.Lerp(rightStart, rightEnd, openDistance);
         }
     }
 }

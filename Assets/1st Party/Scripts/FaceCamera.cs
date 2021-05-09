@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class FaceCamera : MonoBehaviour
 {
-    public Camera mainCamera;
+    private Camera mainCamera;
     public Transform head;
     public Vector3 offset;
+
+    private void Start()
+    {
+        mainCamera = Camera.main;
+    }
 
     //Orient the camera after all movement is completed this frame to avoid jittering
     void LateUpdate()
