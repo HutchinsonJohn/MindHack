@@ -103,7 +103,8 @@ public class PlayerMovement : MonoBehaviour
             if (regenCooldown <= 0f)
             {
                 health++;
-                regenCooldown = 1f;
+                healthMeter.fillAmount = 0.25f + health * 0.15f;
+                regenCooldown = 2f;
             }
             else
             {
@@ -350,7 +351,7 @@ public class PlayerMovement : MonoBehaviour
             } else
             {
                 health--;
-                regenCooldown = 3f;
+                regenCooldown = 5f;
                 actions.Damage();
                 healthMeter.fillAmount = 0.25f + health * 0.15f;
             }
