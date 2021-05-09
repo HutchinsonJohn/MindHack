@@ -620,6 +620,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 061299b3ee9991848a1a484bc119a9b5, type: 3}
+--- !u!114 &99786129 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5744880465798714979, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 99786128}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15799f2cd7211f147bfd7b59ce7cad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &135965354
 GameObject:
   m_ObjectHideFlags: 0
@@ -9137,7 +9149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50816a42da1f4d489a33f449638f722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 0}
+  pauseMenu: {fileID: 99786129}
   textBox: {fileID: 1167938704}
   promptText: {fileID: 579024616}
   eString: {fileID: 356135703}
