@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DoorTrigger : MonoBehaviour
+public class SpecialDoorTrigger : MonoBehaviour
 {
+
+    public EnemyAI enemyAI;
 
     public Transform doorTrigger;
     public Transform leftDoor;
     public Transform rightDoor;
-    public PlayerMovement player;
     private float doorOpenDistanceSqr = 25f;
     private float openDistance;
     private Vector3 leftStart;
@@ -16,7 +17,6 @@ public class DoorTrigger : MonoBehaviour
     private Vector3 leftEnd;
     private Vector3 rightEnd;
     private Vector3 distanceToMove = new Vector3(0, 0, 2);
-    private bool alerted;
 
     // Start is called before the first frame update
     void Start()
@@ -25,14 +25,12 @@ public class DoorTrigger : MonoBehaviour
         rightStart = rightDoor.localPosition;
         leftEnd = leftStart + distanceToMove;
         rightEnd = rightStart - distanceToMove;
-        alerted = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        alerted = player.alerted;
-        if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr && !alerted)
+        if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr || enemyAI.alertState > 0 || (enemyAI.agent.remainingDistance > enemyAI.agent.stoppingDistance || enemyAI.agent.hasPath))
         {
             if (openDistance < 1f)
             {
@@ -41,7 +39,9 @@ public class DoorTrigger : MonoBehaviour
                 leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);
                 rightDoor.localPosition = Vector3.Lerp(rightStart, rightEnd, openDistance);
             }
-        } else if (openDistance > 0f) {
+        }
+        else if (openDistance > 0f)
+        {
             openDistance -= Time.deltaTime;
             Mathf.Max(openDistance, 0f);
             leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);

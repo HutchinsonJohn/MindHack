@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     // Variables
     private float leftRightInput, forwardBackwardInput;
     private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
-    private float moveSpeed = 5f;
+    private float moveSpeed = 4f;
     private float cameraAngle = 45f;
     public float roomLeftLimit = .5f;
     public float roomRightLimit = 24.5f;

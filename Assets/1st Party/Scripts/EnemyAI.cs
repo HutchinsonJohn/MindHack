@@ -6,13 +6,13 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     private Transform target;
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
     private PatrolPath patrol;
     private FieldOfView fow;
     private Actions actions;
     private Animator animator;
     private PlayerController playerController;
-    private int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
+    public int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
     private float engageDistance = 6f;
     private bool playerSpotted;
     private float turnAngle = 75f;
@@ -402,7 +402,7 @@ public class EnemyAI : MonoBehaviour
 
 
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
-    private float movementShotSpreadCoefficient = 0.03f;
+    private float movementShotSpreadCoefficient = 0.04f;
     private float stationaryShotSpread = 0.05f;
     /// <summary>
     /// Handles individual shots and hit registration

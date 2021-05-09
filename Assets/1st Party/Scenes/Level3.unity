@@ -308,7 +308,7 @@ PrefabInstance:
         type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 212624039}
+      objectReference: {fileID: 2596108069110719148}
     - target: {fileID: 1126587051255737847, guid: 158ff3edc8ab12e48a239ac68384f41a,
         type: 3}
       propertyPath: doorTrigger
