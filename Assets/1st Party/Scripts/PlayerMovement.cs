@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class PlayerMovement : MonoBehaviour
     private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
     private float moveSpeed = 5f;
     private float cameraAngle = 45f;
-    public float roomBottomLimit = -19.5f;
     public float roomLeftLimit = .5f;
     public float roomRightLimit = 24.5f;
     private bool hacked;
@@ -45,7 +45,8 @@ public class PlayerMovement : MonoBehaviour
     private int health = 5; //5 is max health
     private float regenCooldown = 0f;
     private bool isDying;
-    private GameObject gameOverCanvas;
+    public GameObject gameOverCanvas;
+    public Image healthMeter;
 
     public LayerMask targetLayersMask;
     private LayerMask enemyMask;
@@ -75,8 +76,6 @@ public class PlayerMovement : MonoBehaviour
         }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         enemyMask = LayerMask.NameToLayer("Enemy");
-        gameOverCanvas = GameObject.Find("GameOver"); //Could avoid doing this by creating prefab with player and game canvas in one
-        gameOverCanvas.SetActive(false);
         ThirdPersonCamera();
     }
 
@@ -253,13 +252,6 @@ public class PlayerMovement : MonoBehaviour
 
         pos.x = Mathf.Max(roomLeftLimit, Mathf.Min(pos.x, roomRightLimit));
 
-        //if (pos.z < roomBottomLimit)
-        //{
-        //    pos.z = roomBottomLimit;
-        //    float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) + transformTarget.position.y;
-        //    pos.y = x;
-        //}
-
         Vector3 smooth = Vector3.Lerp(camTransform.position, pos, 5 * Time.deltaTime);
         smooth.x = pos.x;
         camTransform.position = smooth;
@@ -350,20 +342,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void Hit()
     {
-        if (hacked)
+        if (!isDying)
         {
-            EndHack();
-        } else
-        {
-            health--;
-            regenCooldown = 3f;
-            actions.Damage();
-        }
-        if (health < 1 && !isDying)
-        {
-            isDying = true;
-            playerAnimator.SetTrigger("Death");
-            Invoke(nameof(GameOver), 3.5f);
+            if (hacked)
+            {
+                EndHack();
+            } else
+            {
+                health--;
+                regenCooldown = 3f;
+                actions.Damage();
+                healthMeter.fillAmount = 0.25f + health * 0.15f;
+            }
+            if (health < 1)
+            {
+                isDying = true;
+                playerAnimator.SetTrigger("Death");
+                Invoke(nameof(GameOver), 3.5f);
+            }
         }
     }
 

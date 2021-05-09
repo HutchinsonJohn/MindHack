@@ -632,6 +632,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15799f2cd7211f147bfd7b59ce7cad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &99786130 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7132906018030859932, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 99786128}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &99786131 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4413171381759164931, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 99786128}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &135965354
 GameObject:
   m_ObjectHideFlags: 0
@@ -13546,6 +13564,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
+      propertyPath: healthMeter
+      value: 
+      objectReference: {fileID: 99786130}
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
+      propertyPath: gameOverCanvas
+      value: 
+      objectReference: {fileID: 99786131}
     - target: {fileID: 990457387539349794, guid: 3c91ae77b26fc864a8df5b7516235848,
         type: 3}
       propertyPath: m_Name
