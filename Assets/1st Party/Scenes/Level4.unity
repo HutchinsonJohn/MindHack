@@ -830,12 +830,12 @@ PrefabInstance:
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
       propertyPath: patrolPoints.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
       propertyPath: lookDirections.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
@@ -854,8 +854,13 @@ PrefabInstance:
       objectReference: {fileID: 248697371}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
+      propertyPath: patrolPoints.Array.data[3]
+      value: 
+      objectReference: {fileID: 1908323986}
+    - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
+        type: 3}
       propertyPath: patrolPauseTimes.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
@@ -874,18 +879,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
+      propertyPath: lookDirections.Array.data[3]
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
+        type: 3}
       propertyPath: patrolPauseTimes.Array.data[0]
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
       propertyPath: patrolPauseTimes.Array.data[1]
-      value: 0.25
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
         type: 3}
       propertyPath: patrolPauseTimes.Array.data[2]
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592274990481381006, guid: bc62043781c9b7b47bfcc91e2167477c,
+        type: 3}
+      propertyPath: patrolPauseTimes.Array.data[3]
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc62043781c9b7b47bfcc91e2167477c, type: 3}

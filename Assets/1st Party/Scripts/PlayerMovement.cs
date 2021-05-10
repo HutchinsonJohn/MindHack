@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     public int sleptEnemies = 0;
     public int hackedEnemies = 0;
 
-    private int health = 5; //5 is max health
+    private int health = 10000; //5 is max health
     private float regenCooldown = 0f;
     private bool isDying;
     public GameObject gameOverCanvas;
@@ -230,7 +230,7 @@ public class PlayerMovement : MonoBehaviour
     private void Look()
     {
         Ray mousePos = viewCamera.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(mousePos, out RaycastHit hit, lookPlane);
+        Physics.Raycast(mousePos, out RaycastHit hit, 10000f, lookPlane);
         lookAt = new Vector3(hit.point.x, transformTarget.position.y, hit.point.z);
         //Debug.DrawLine(transform.position, lookAt, Color.red);
         if (aiming)
@@ -247,7 +247,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, obstacleMask))
         {
             pos.z = hit.point.z + .25f;
-            float x = Mathf.Sqrt(Mathf.Pow(distance, 2) - Mathf.Pow(pos.z - transformTarget.position.z, 2)) + transformTarget.position.y;
+            float x = Mathf.Sqrt(Mathf.Pow(distance+.5f, 2) - Mathf.Pow(hit.point.z - transformTarget.position.z, 2)) + transformTarget.position.y;
             pos.y = x;
         }
 

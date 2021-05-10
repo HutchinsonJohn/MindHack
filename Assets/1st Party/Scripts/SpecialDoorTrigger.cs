@@ -30,7 +30,7 @@ public class SpecialDoorTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr || enemyAI.alertState > 0 || (enemyAI.agent.remainingDistance > enemyAI.agent.stoppingDistance || enemyAI.agent.hasPath))
+        if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr || enemyAI.alertState > 0 || (!enemyAI.hacked && !enemyAI.killed && (enemyAI.agent.remainingDistance > enemyAI.agent.stoppingDistance || enemyAI.agent.hasPath)))
         {
             if (openDistance < 1f)
             {

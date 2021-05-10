@@ -1730,7 +1730,6 @@ MonoBehaviour:
   lookPlane:
     serializedVersion: 2
     m_Bits: 256
-  roomBottomLimit: -19.5
   roomLeftLimit: 0.5
   roomRightLimit: 24.5
   alerted: 0
@@ -1740,9 +1739,11 @@ MonoBehaviour:
   killedEnemies: 0
   sleptEnemies: 0
   hackedEnemies: 0
+  gameOverCanvas: {fileID: 0}
+  healthMeter: {fileID: 0}
   targetLayersMask:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 33281
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
