@@ -34,7 +34,6 @@ public class EnemyAI : MonoBehaviour
 
     private Transform lastSpotted;
 
-    private LayerMask enemyMask;
     public LayerMask targetLayersMask;
 
     private bool hackable;
@@ -52,7 +51,6 @@ public class EnemyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         playerController.SetArsenal("AK-74M");
-        enemyMask = LayerMask.NameToLayer("Enemy");
         characterController = GameObject.Find("Player").GetComponent<CharacterController>();
         allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
@@ -209,7 +207,7 @@ public class EnemyAI : MonoBehaviour
                     {
                         if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
                         {
-                            if (hit.transform.name.Equals("Player"))
+                            if (hit.transform.tag == "Player")
                             {
                                 if (shootingCoroutine == null && discoverCoroutine == null)
                                 {
@@ -416,7 +414,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
         {
-            if (hit.transform.gameObject.layer != enemyMask)
+            if (hit.transform.tag != "Enemy") //Won't shoot if another enemy is directly in front of them
             {
                 animator.SetTrigger("Attack");
                 float shotSpread = characterController.velocity.magnitude * movementShotSpreadCoefficient + stationaryShotSpread;
@@ -425,7 +423,7 @@ public class EnemyAI : MonoBehaviour
                     if (hit.transform.name.Equals("Player"))
                     {
                         hit.transform.SendMessage("Hit");
-                    } else if (hit.transform.tag == "Enemy")
+                    } else if (hit.transform.tag == "Enemy") //Can still miss and kill other enemies
                     {
                         hit.transform.SendMessage("Killed");
                     }

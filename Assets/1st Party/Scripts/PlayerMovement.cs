@@ -49,7 +49,6 @@ public class PlayerMovement : MonoBehaviour
     public Image healthMeter;
 
     public LayerMask targetLayersMask;
-    private LayerMask enemyMask;
     public LayerMask obstacleMask;
 
     // Start is called before the first frame update
@@ -75,7 +74,6 @@ public class PlayerMovement : MonoBehaviour
             playerController.SetArsenal("Pistol");
         }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        enemyMask = LayerMask.NameToLayer("Enemy");
         ThirdPersonCamera();
     }
 
@@ -159,13 +157,13 @@ public class PlayerMovement : MonoBehaviour
 
                 if (hacked)
                 {
-                    transformTarget.gameObject.layer = LayerMask.NameToLayer("Player");
+                    transformTarget.tag = "Player";
                 }
 
                 if (Physics.Raycast(transformTarget.position + gunHeight, transformTarget.forward, out RaycastHit hit, 100, targetLayersMask))
                 {
 
-                    if (hit.transform.gameObject.layer == enemyMask)
+                    if (hit.transform.tag == "Enemy")
                     {
                         if (rifleEquipped || hacked)
                         {
@@ -325,13 +323,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndHack()
     {
-        //Die (potential TODO: change to ragdoll)
-        if (animatorTarget.GetCurrentAnimatorStateInfo(0).IsName("Death"))
-            animatorTarget.Play("Idle", 0);
-        else
-            animatorTarget.SetTrigger("Death");
-        // TODO: change enemy layer
-
         controller = characterController;
         hacked = false;
         hackedTarget.SendMessage("MindHacked");
