@@ -40,6 +40,8 @@ public class EnemyAI : MonoBehaviour
     private bool wasHackable;
     public GameObject hackCanvas;
 
+    private GameObject player;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,7 +53,8 @@ public class EnemyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         playerController.SetArsenal("AK-74M");
-        characterController = GameObject.Find("Player").GetComponent<CharacterController>();
+        player = GameObject.Find("Player");
+        characterController = player.GetComponent<CharacterController>();
         allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
@@ -420,9 +423,9 @@ public class EnemyAI : MonoBehaviour
                 float shotSpread = characterController.velocity.magnitude * movementShotSpreadCoefficient + stationaryShotSpread;
                 if (Physics.Raycast(transform.position + gunHeight, transform.TransformDirection(new Vector3((1 - 2 * Random.value) * shotSpread, (1 - 2 * Random.value) * shotSpread, 1)), out hit, 100, targetLayersMask))
                 {
-                    if (hit.transform.name.Equals("Player"))
+                    if (hit.transform.tag == "Player")
                     {
-                        hit.transform.SendMessage("Hit");
+                        player.SendMessage("Hit");
                     } else if (hit.transform.tag == "Enemy") //Can still miss and kill other enemies
                     {
                         hit.transform.SendMessage("Killed");

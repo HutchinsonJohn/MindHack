@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Variables
     private float leftRightInput, forwardBackwardInput;
-    private float distance = 9f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
+    private float distance = 10f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
     private float moveSpeed = 4f;
     private float cameraAngle = 45f;
     public float roomLeftLimit = .5f;
@@ -158,6 +158,7 @@ public class PlayerMovement : MonoBehaviour
                 if (hacked)
                 {
                     transformTarget.tag = "Player";
+                    transformTarget.gameObject.layer = LayerMask.NameToLayer("Player");
                 }
 
                 if (Physics.Raycast(transformTarget.position + gunHeight, transformTarget.forward, out RaycastHit hit, 100, targetLayersMask))
@@ -300,7 +301,6 @@ public class PlayerMovement : MonoBehaviour
 
                 aiming = false;
                 hacked = true;
-                hackedEnemies++;
                 StartCoroutine(HackedCoroutine());
             }
             else
@@ -330,6 +330,7 @@ public class PlayerMovement : MonoBehaviour
         animatorTarget = playerAnimator;
         animatorTarget.SetBool("Squat", false);
         aiming = false;
+        hackedEnemies++;
     }
 
     private void Hit()
@@ -338,7 +339,14 @@ public class PlayerMovement : MonoBehaviour
         {
             if (hacked)
             {
-                EndHack();
+                controller = characterController;
+                hacked = false;
+                hackedTarget.SendMessage("Killed");
+                transformTarget = transform;
+                animatorTarget = playerAnimator;
+                animatorTarget.SetBool("Squat", false);
+                aiming = false;
+                killedEnemies++;
             } else
             {
                 health--;
