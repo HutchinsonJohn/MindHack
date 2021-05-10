@@ -18,6 +18,10 @@ public class LoadTrigger : MonoBehaviour
             PlayerPrefs.SetInt("KilledEnemies", PlayerPrefs.GetInt("KilledEnemies") + player.killedEnemies);
             PlayerPrefs.SetInt("SleptEnemies", PlayerPrefs.GetInt("SleptEnemies") + player.sleptEnemies);
             PlayerPrefs.SetInt("HackedEnemies", PlayerPrefs.GetInt("HackedEnemies") + player.hackedEnemies);
+            if (!player.wasDetected)
+            {
+                PlayerPrefs.SetInt("TimesUndetected", PlayerPrefs.GetInt("TimesUndetected") + 1);
+            }
             PlayerPrefs.SetInt("RifleEquipped", Convert.ToInt32(player.rifleEquipped));
             PlayerPrefs.SetInt("CurrentLevel", levelToLoad);
             PlayerPrefs.Save();

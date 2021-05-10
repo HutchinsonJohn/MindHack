@@ -27,6 +27,7 @@ public class MainMenu : MonoBehaviour
         PlayerPrefs.SetInt("KilledEnemies", 0);
         PlayerPrefs.SetInt("SleptEnemies", 0);
         PlayerPrefs.SetInt("HackedEnemies", 0);
+        PlayerPrefs.SetInt("TimesUndetected", 0);
         PlayerPrefs.SetInt("CurrentLevel", 1);
         PlayerPrefs.Save();
 

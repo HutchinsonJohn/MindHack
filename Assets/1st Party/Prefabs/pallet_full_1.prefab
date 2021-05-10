@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5141996164141952309}
   - component: {fileID: 5141996164146044245}
   - component: {fileID: 5141996164151361589}
+  - component: {fileID: 3820225051189575932}
   m_Layer: 0
   m_Name: pallet_full_1
   m_TagString: Untagged
@@ -114,3 +115,16 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &3820225051189575932
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5141996164143952885}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.4668441, y: 1.4744303, z: 1.6535404}
+  m_Center: {x: -0.0020479858, y: -0.0028870113, z: 0.82718015}

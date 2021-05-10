@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private float maxHackDuration = 10f;
     private bool aiming;
     public bool alerted;
+    public bool wasDetected;
     public bool rifleEquipped;
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
     public Vector3 lookAt;
@@ -262,6 +263,7 @@ public class PlayerMovement : MonoBehaviour
     private void Alerted()
     {
         alerted = true;
+        wasDetected = true;
     }
 
     private void Hack()
