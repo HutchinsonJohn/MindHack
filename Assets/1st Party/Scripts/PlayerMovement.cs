@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private float maxHackDuration = 10f;
     private bool aiming;
     public bool alerted;
+    public bool wasAlerted;
     public bool wasDetected;
     public bool rifleEquipped;
     Vector3 gunHeight = new Vector3(0, 1.4f, 0);
@@ -51,6 +52,9 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask targetLayersMask;
     public LayerMask obstacleMask;
+
+    public AudioSource akShot;
+    public AudioSource tranqShot;
 
     // Start is called before the first frame update
     void Start()
@@ -76,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
         }
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         ThirdPersonCamera();
+        BGM.Instance.Play();
     }
 
     // Update is called once per frame
@@ -188,10 +193,14 @@ public class PlayerMovement : MonoBehaviour
 
                 if (rifleEquipped || hacked)
                 {
+                    akShot.Play();
                     foreach (GameObject enemy in enemies)
                     {
                         enemy.SendMessage("Caution", transformTarget.position);
                     }
+                } else
+                {
+                    tranqShot.Play();
                 }
             }
         }
@@ -201,10 +210,25 @@ public class PlayerMovement : MonoBehaviour
         if (!alerted)
         {
             Hack();
-        } else if (hacked)
+            if (wasAlerted)
+            {
+                BGM.Instance.Unseen();
+            }
+            wasAlerted = false;
+        } else
         {
-            EndHack();
+            if (hacked)
+            {
+                EndHack();
+            }
+            if (!wasAlerted)
+            {
+                BGM.Instance.Spotted();
+            }
+            wasAlerted = true;
         }
+        
+
         
         alerted = false;
     }

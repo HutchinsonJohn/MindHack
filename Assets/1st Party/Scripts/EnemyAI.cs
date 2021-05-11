@@ -21,6 +21,10 @@ public class EnemyAI : MonoBehaviour
     private bool arrived;
     private CharacterController characterController;
 
+    public AudioSource intruder;
+    public AudioSource whosThere;
+    public AudioSource akShot;
+
     public GameObject sleepText;
     public GameObject mindHackedText;
 
@@ -63,6 +67,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void Hacked()
     {
+        whosThere.Stop();
+        intruder.Stop();
         hacked = true;
         StopAllCoroutines();
         agent.enabled = false;
@@ -106,6 +112,8 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void Killed()
     {
+        whosThere.Stop();
+        intruder.Stop();
         killed = true;
         StopAllCoroutines();
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
@@ -178,13 +186,18 @@ public class EnemyAI : MonoBehaviour
                     {
                         //pause, then walk towards
                         if (cautionCoroutine == null)
+                        {
+                            Invoke(nameof(WhosThere), .4f);
                             cautionCoroutine = StartCoroutine(CautionCoroutine());
+                        }
                     }
                     else
                     {
-                        //play alert sound
+                        Invoke(nameof(Intruder), .7f);
                         if (discoverCoroutine == null)
+                        {
                             discoverCoroutine = StartCoroutine(DiscoverCoroutine(lastSpotted.position));
+                        }
                     }
                     break;
                 case 1:
@@ -194,10 +207,12 @@ public class EnemyAI : MonoBehaviour
                     }
                     else
                     {
-                        //play alert sound
                         agent.isStopped = true;
                         if (discoverCoroutine == null)
+                        {
+                            Invoke(nameof(Intruder), .5f);
                             discoverCoroutine = StartCoroutine(DiscoverCoroutine(lastSpotted.position));
+                        }
                     }
                     break;
                 case 2:
@@ -312,6 +327,16 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(GetPath()); //Debug
     }
 
+    void Intruder()
+    {
+        intruder.Play();
+    }
+
+    void WhosThere()
+    {
+        whosThere.Play();
+    }
+
     /// <summary>
     /// Called when an enemy is at alertState 3, does nothing when a hacked enemy is spotted by another enemy
     /// </summary>
@@ -420,6 +445,7 @@ public class EnemyAI : MonoBehaviour
             if (hit.transform.tag != "Enemy") //Won't shoot if another enemy is directly in front of them
             {
                 animator.SetTrigger("Attack");
+                akShot.Play();
                 float shotSpread = characterController.velocity.magnitude * movementShotSpreadCoefficient + stationaryShotSpread;
                 if (Physics.Raycast(transform.position + gunHeight, transform.TransformDirection(new Vector3((1 - 2 * Random.value) * shotSpread, (1 - 2 * Random.value) * shotSpread, 1)), out hit, 100, targetLayersMask))
                 {
@@ -588,7 +614,7 @@ public class EnemyAI : MonoBehaviour
     {
         agent.isStopped = true;
         alertState = 1;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(.5f);
         agent.isStopped = false;
 
         cautionCoroutine = null;
@@ -603,7 +629,7 @@ public class EnemyAI : MonoBehaviour
     {
         agent.isStopped = true;
         alertState = 3;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1f);
         agent.isStopped = false;
 
         discoverCoroutine = null;

@@ -13,11 +13,13 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 60;
         if (PlayerPrefs.GetInt("CurrentLevel") == 0)
         {
             loadGameButton.interactable = false;
             loadGameText.alpha = .25f;
         }
+        BGM.Instance.Stop();
     }
 
     
