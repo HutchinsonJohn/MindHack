@@ -44,9 +44,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
         type: 3}
+      propertyPath: hackBar
+      value: 
+      objectReference: {fileID: 7661860351609764742}
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
       propertyPath: healthMeter
       value: 
       objectReference: {fileID: 5114425287041161848}
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
+      propertyPath: hackBarImage
+      value: 
+      objectReference: {fileID: 7371349589658019165}
     - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
         type: 3}
       propertyPath: gameOverCanvas
@@ -343,6 +353,24 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2596108069425687780}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7661860351609764742 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5643960231902697314, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 2596108069425687780}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7371349589658019165 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4777037093592172985, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 2596108069425687780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3731960606565499255
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -56,7 +56,7 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 100
+    m_BakeResolution: 50
     m_AtlasSize: 1024
     m_AO: 0
     m_AOMaxDistance: 1
@@ -75,10 +75,10 @@ LightmapSettings:
     m_MixedBakeMode: 2
     m_BakeBackend: 2
     m_PVRSampling: 1
-    m_PVRDirectSampleCount: 64
-    m_PVRSampleCount: 1024
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
     m_PVRBounces: 4
-    m_PVREnvironmentSampleCount: 512
+    m_PVREnvironmentSampleCount: 256
     m_PVREnvironmentReferencePointCount: 2048
     m_PVRFilteringMode: 1
     m_PVRDenoiserTypeDirect: 1
@@ -647,6 +647,24 @@ MonoBehaviour:
 --- !u!1 &99786131 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4413171381759164931, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 99786128}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &99786132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4777037093592172985, guid: 061299b3ee9991848a1a484bc119a9b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 99786128}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &99786133 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5643960231902697314, guid: 061299b3ee9991848a1a484bc119a9b5,
     type: 3}
   m_PrefabInstance: {fileID: 99786128}
   m_PrefabAsset: {fileID: 0}
@@ -13635,9 +13653,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
         type: 3}
+      propertyPath: hackBar
+      value: 
+      objectReference: {fileID: 99786133}
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
       propertyPath: healthMeter
       value: 
       objectReference: {fileID: 99786130}
+    - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
+        type: 3}
+      propertyPath: hackBarImage
+      value: 
+      objectReference: {fileID: 99786132}
     - target: {fileID: 990457387539349792, guid: 3c91ae77b26fc864a8df5b7516235848,
         type: 3}
       propertyPath: gameOverCanvas

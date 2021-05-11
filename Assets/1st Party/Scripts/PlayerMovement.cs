@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public float roomLeftLimit = .5f;
     public float roomRightLimit = 24.5f;
     private bool hacked;
-    private float maxHackDuration = 10f;
+    private float maxHackDuration = 15f;
     private bool aiming;
     public bool alerted;
     public bool wasAlerted;
@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     public int sleptEnemies = 0;
     public int hackedEnemies = 0;
 
-    private int health = 10000; //5 is max health
+    private int health = 5; //5 is max health
     private float regenCooldown = 0f;
     private bool isDying;
     public GameObject gameOverCanvas;
@@ -55,6 +55,9 @@ public class PlayerMovement : MonoBehaviour
 
     public AudioSource akShot;
     public AudioSource tranqShot;
+
+    public GameObject hackBar;
+    public Image hackBarImage;
 
     // Start is called before the first frame update
     void Start()
@@ -349,6 +352,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndHack()
     {
+        hackBar.SetActive(false);
         controller = characterController;
         hacked = false;
         hackedTarget.SendMessage("MindHacked");
@@ -396,9 +400,11 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator HackedCoroutine()
     {
+        hackBar.SetActive(true);
         float hackDuration = 0;
         while (hackDuration < maxHackDuration)
         {
+            hackBarImage.fillAmount = Mathf.Lerp(.075f, 1, ((maxHackDuration - hackDuration) / maxHackDuration));
             if (!hacked)
             {
                 yield break;

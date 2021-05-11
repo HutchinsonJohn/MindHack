@@ -49,7 +49,7 @@ public class WinScreen : MonoBehaviour
         PlayerPrefs.SetInt("SleptEnemies", 0);
         PlayerPrefs.SetInt("HackedEnemies", 0);
         PlayerPrefs.SetInt("TimesUndetected", 0);
-        PlayerPrefs.SetInt("CurrentLevel", 1);
+        PlayerPrefs.SetInt("CurrentLevel", 0);
         PlayerPrefs.Save();
     }
 
