@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     private int health = 5; //5 is max health
     private float regenCooldown = 0f;
-    private bool isDying;
+    public bool isDying;
     public GameObject gameOverCanvas;
     public Image healthMeter;
 
