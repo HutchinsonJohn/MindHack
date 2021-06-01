@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Used to make the Mindhacking device invisible when picked up
+/// </summary>
 public class ToggleMesh : MonoBehaviour
 {
 
-    public GameObject box;
-    private MeshRenderer mesh;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        mesh = box.GetComponent<MeshRenderer>();
-    }
+    public MeshRenderer mesh;
 
     private void OnTriggerEnter(Collider other)
     {

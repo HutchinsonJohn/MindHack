@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Contains functions for finding targets in objects in field of view
+/// </summary>
 public class FieldOfView : MonoBehaviour
 {
 
@@ -15,8 +18,13 @@ public class FieldOfView : MonoBehaviour
 
     [HideInInspector]
     public Transform viewTarget;
+    [HideInInspector]
     public Transform hackTarget;
 
+    /// <summary>
+    /// Find target in fov
+    /// </summary>
+    /// <returns></returns>
     public bool FindTarget()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
@@ -27,6 +35,7 @@ public class FieldOfView : MonoBehaviour
             Transform target = targetsInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
             float angleBetweenTargetAndLook = Vector3.Angle(transform.forward, dirToTarget);
+            // TODO: Send alert if player is in fov regardless of lowest angle 
             if (angleBetweenTargetAndLook < viewAngle / 2 && angleBetweenTargetAndLook < lowestAngle)
             {
                 float disToTarget = Vector3.Distance(transform.position, target.position);
@@ -41,6 +50,11 @@ public class FieldOfView : MonoBehaviour
         return (viewTarget != null);
     }
 
+    /// <summary>
+    /// Finds target in fov ignoring walls
+    /// </summary>
+    /// <param name="lookAt"></param>
+    /// <returns></returns>
     public bool FindIndirectTarget(Vector3 lookAt)
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, hackRadius, targetMask);
@@ -60,6 +74,12 @@ public class FieldOfView : MonoBehaviour
         return (hackTarget != null);
     }
 
+    /// <summary>
+    /// Debug for displaying fov cone
+    /// </summary>
+    /// <param name="angleInDegrees"></param>
+    /// <param name="angleIsGlobal"></param>
+    /// <returns></returns>
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
     {
         if (!angleIsGlobal)

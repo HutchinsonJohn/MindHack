@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Handles the dialog in the first level
+/// </summary>
 public class TutorialScript : MonoBehaviour
 {
 
@@ -64,6 +67,10 @@ public class TutorialScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Triggers dialog flag if proper conditions are met
+    /// </summary>
+    /// <param name="flag">Dialog flag to be triggered</param>
     void Trigger(int flag)
     {
         switch (flag)
@@ -89,6 +96,11 @@ public class TutorialScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Slowly displays the dialogue text
+    /// </summary>
+    /// <param name="flag">Corresponding dialogue to display</param>
+    /// <returns></returns>
     IEnumerator TextCoroutine(int flag)
     {
         promptText.gameObject.SetActive(true);

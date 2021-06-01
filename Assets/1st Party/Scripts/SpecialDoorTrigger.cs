@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles a special door so that it may be opened by a specific enemy
+/// </summary>
 public class SpecialDoorTrigger : MonoBehaviour
 {
 
@@ -30,6 +33,9 @@ public class SpecialDoorTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // TODO: If all enemies are defeated either open door, or if door is closed, keycard is not attached to player or enemy, and the player and keycard are on opposite sides of the door, remind the player they can restart
+        // In general a more elegant solution should be implemented
+        // Last condition exists so that the enemy may return to the room
         if (Vector3.SqrMagnitude(doorTrigger.localPosition - transform.localPosition) < doorOpenDistanceSqr || enemyAI.alertState > 0 || (!enemyAI.hacked && !enemyAI.killed && (enemyAI.agent.remainingDistance > enemyAI.agent.stoppingDistance || enemyAI.agent.hasPath)))
         {
             if (openDistance < 1f)

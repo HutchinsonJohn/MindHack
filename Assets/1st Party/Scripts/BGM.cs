@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles background music behaviors
+/// </summary>
 public class BGM : MonoBehaviour
 {
 
@@ -27,6 +30,9 @@ public class BGM : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
+    /// <summary>
+    /// Begins playing undetected theme if not already playing
+    /// </summary>
     public void Play()
     {
         if (!undetected.isPlaying)
@@ -36,26 +42,39 @@ public class BGM : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Fades out detected theme into undetected
+    /// </summary>
     public void Unseen()
     {
         StartCoroutine(Fade());
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void Spotted()
     {
         StopAllCoroutines();
         undetected.Stop();
         detected.Play();
-        detected.volume = musicVolume;
+        detected.volume = musicVolume; //Resets volume for when detected while music if fading
     }
 
+    /// <summary>
+    /// Stops all music
+    /// </summary>
     public void Stop()
     {
         undetected.Stop();
         detected.Stop();
     }
 
-    IEnumerator Fade()
+    /// <summary>
+    /// Fades out detected theme into undetected
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Fade()
     {
         float currentTime = 0;
         undetected.Play();

@@ -3,23 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Handles enemy behavior, pathing, and shooting
+/// </summary>
 public class EnemyAI : MonoBehaviour
 {
-    private Transform target;
     public NavMeshAgent agent;
+
     private PatrolPath patrol;
     private FieldOfView fow;
     private Actions actions;
     private Animator animator;
     private PlayerController playerController;
-    public int alertState; // 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
-    private float engageDistance = 6f;
-    private bool playerSpotted;
-    private float turnAngle = 75f;
-    public bool hacked; //Currently controlled by player
-    public bool killed;
-    private bool arrived;
     private CharacterController characterController;
+    private GameObject[] allEnemies;
+
+    private float engageDistance = 6f;
+    private float turnAngle = 75f;
+    private Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+    private float movementShotSpreadCoefficient = 0.04f;
+    private float stationaryShotSpread = 0.05f;
+
+    /// <summary>
+    /// 0 = patrol, 1 = caution, 2 = searching, 3 = engaging
+    /// </summary>
+    public int alertState;
+    private bool playerSpotted;
+    /// <summary>
+    /// Currently controlled by player
+    /// </summary>
+    public bool hacked;
+    public bool killed;
+    /// <summary>
+    /// Someone has arrived at player last know position, useful so that enemies do not get stuck on each other trying to get to the exact location
+    /// </summary>
+    private bool arrived;
+    private bool hackable;
+    private bool wasHackable;
+    private Transform lastSpotted;
 
     public AudioSource intruder;
     public AudioSource whosThere;
@@ -27,24 +48,17 @@ public class EnemyAI : MonoBehaviour
 
     public GameObject sleepText;
     public GameObject mindHackedText;
+    public GameObject hackCanvas;
+
+    private GameObject player;
+
+    public LayerMask targetLayersMask;
 
     Coroutine lookCoroutine;
     Coroutine searchCoroutine;
     Coroutine cautionCoroutine;
     Coroutine discoverCoroutine;
     Coroutine shootingCoroutine;
-
-    private GameObject[] allEnemies;
-
-    private Transform lastSpotted;
-
-    public LayerMask targetLayersMask;
-
-    private bool hackable;
-    private bool wasHackable;
-    public GameObject hackCanvas;
-
-    private GameObject player;
 
     // Start is called before the first frame update
     void Start()
@@ -83,6 +97,9 @@ public class EnemyAI : MonoBehaviour
         Killed();
     }
 
+    /// <summary>
+    /// Displays indicator that enemy has been defeated due to mindhacking (...)
+    /// </summary>
     void MindHackedText()
     {
         mindHackedText.SetActive(true);
@@ -97,11 +114,17 @@ public class EnemyAI : MonoBehaviour
         Killed();
     }
 
+    /// <summary>
+    /// Displays indicator that enemy has been defeated due to sleep dart (zzz)
+    /// </summary>
     void SleptText()
     {
         sleepText.SetActive(true);
     }
 
+    /// <summary>
+    /// Damage animation only
+    /// </summary>
     void Damage()
     {
         actions.Damage();
@@ -121,6 +144,14 @@ public class EnemyAI : MonoBehaviour
         actions.Death();
     }
 
+    /// <summary>
+    /// Sets hackable to true
+    /// </summary>
+    public void Hackable()
+    {
+        hackable = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -136,11 +167,6 @@ public class EnemyAI : MonoBehaviour
             animator.SetFloat("Speed", agent.velocity.magnitude);
         }
         
-    }
-
-    public void Hackable()
-    {
-        hackable = true;
     }
 
     private void LateUpdate()
@@ -327,11 +353,17 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(GetPath()); //Debug
     }
 
+    /// <summary>
+    /// Plays intruder voice line
+    /// </summary>
     void Intruder()
     {
         intruder.Play();
     }
 
+    /// <summary>
+    /// Plays whos there voice line
+    /// </summary>
     void WhosThere()
     {
         whosThere.Play();
@@ -431,10 +463,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-
-    Vector3 gunHeight = new Vector3(0, 1.4f, 0);
-    private float movementShotSpreadCoefficient = 0.04f;
-    private float stationaryShotSpread = 0.05f;
     /// <summary>
     /// Handles individual shots and hit registration
     /// </summary>
@@ -461,6 +489,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Ends shooting coroutine if active, unaims, and allows agent to move
+    /// </summary>
     private void StopShooting()
     {
         if (shootingCoroutine != null)
@@ -635,9 +666,13 @@ public class EnemyAI : MonoBehaviour
         discoverCoroutine = null;
     }
 
-    LineRenderer line;
+    LineRenderer line; // Debug for pathing
 
-    IEnumerator GetPath()
+    /// <summary>
+    /// Debug for pathing
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator GetPath()
     {
         line.SetPosition(0, transform.position); //set the line's origin
 
@@ -648,7 +683,11 @@ public class EnemyAI : MonoBehaviour
         //agent.Stop();//add this if you don't want to move the agent
     }
 
-    void DrawPath(NavMeshPath path)
+    /// <summary>
+    /// Debug for pathing
+    /// </summary>
+    /// <param name="path"></param>
+    private void DrawPath(NavMeshPath path)
     {
         if (path.corners.Length < 2) //if the path has 1 or no corners, there is no need
             return;

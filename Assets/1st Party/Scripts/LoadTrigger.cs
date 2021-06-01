@@ -4,12 +4,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 
+/// <summary>
+/// End of level load trigger
+/// </summary>
 public class LoadTrigger : MonoBehaviour
 {
 
     public int levelToLoad;
 
-    public PlayerMovement player;
+    private PlayerMovement player;
+
+    private void Start()
+    {
+        player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {

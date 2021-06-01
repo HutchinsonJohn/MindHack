@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles player movement, camera, shooting, and hacking
+/// </summary>
 public class PlayerMovement : MonoBehaviour
 {
-
-    public LayerMask lookPlane;
 
     private CharacterController controller;
     private CharacterController characterController;
@@ -17,47 +18,71 @@ public class PlayerMovement : MonoBehaviour
     private Camera viewCamera;
     private Transform camTransform;
     private FieldOfView fow;
-    private Transform transformTarget; //Transform the camera should follow, either hacked enemy or player
+    /// <summary>
+    /// Transform the camera should follow, either hacked enemy or player
+    /// </summary>
+    private Transform transformTarget;
     private Transform hackedTarget;
     private Animator animatorTarget;
     private GameObject[] enemies;
 
-    // Variables
-    private float leftRightInput, forwardBackwardInput;
-    private float distance = 10f; //camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
-    private float moveSpeed = 4f;
+    // Camera
+    /// <summary>
+    /// camera distance from player, more accurately its height times sin(cameraAngle), when not blocked by an object
+    /// </summary>
+    private float distance = 10f;
     private float cameraAngle = 45f;
-    public float roomLeftLimit = .5f;
-    public float roomRightLimit = 24.5f;
-    private bool hacked;
-    private float maxHackDuration = 15f;
-    private bool aiming;
+    public Vector3 lookAt;
+
+    // Movement
+    private float leftRightInput, forwardBackwardInput;
+    private float moveSpeed = 4f;
+    private float turnSpeed = 480f;
+
+    // Detection
     public bool alerted;
     public bool wasAlerted;
     public bool wasDetected;
-    public bool rifleEquipped;
-    Vector3 gunHeight = new Vector3(0, 1.4f, 0);
-    public Vector3 lookAt;
-    public float hackMeter;
 
+    // Weapons
+    private bool aiming;
+    public bool rifleEquipped;
+    private Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+
+    // Hacking
+    private bool hacked;
+    public float hackMeter;
+    private float maxHackDuration = 15f;
+
+    // Health
+    // TODO: maxHealth
+    public bool isDying;
+    private int health = 5; //5 is max health
+    private float regenCooldown = 0f;
+
+    // Room
+    public float roomLeftLimit = .5f;
+    public float roomRightLimit = 24.5f;
+
+    // Defeated Enemies
     public int killedEnemies = 0;
     public int sleptEnemies = 0;
     public int hackedEnemies = 0;
 
-    private int health = 5; //5 is max health
-    private float regenCooldown = 0f;
-    public bool isDying;
+    // LayerMasks
+    public LayerMask targetLayersMask;
+    public LayerMask obstacleMask;
+    public LayerMask lookPlane;
+
+    // UI
+    public GameObject hackBar;
+    public Image hackBarImage;
     public GameObject gameOverCanvas;
     public Image healthMeter;
 
-    public LayerMask targetLayersMask;
-    public LayerMask obstacleMask;
-
+    // Sounds
     public AudioSource akShot;
     public AudioSource tranqShot;
-
-    public GameObject hackBar;
-    public Image hackBarImage;
 
     // Start is called before the first frame update
     void Start()
@@ -150,6 +175,7 @@ public class PlayerMovement : MonoBehaviour
             aiming = false;
         }
 
+        // TODO: Cleanup shooting behavior or move to another class
         if (!aiming)
         {
             Movement();
@@ -235,8 +261,10 @@ public class PlayerMovement : MonoBehaviour
         
         alerted = false;
     }
-
-    private float turnSpeed = 480f;
+    
+    /// <summary>
+    /// Handles player movement and rotation smoothing
+    /// </summary>
     private void Movement()
     {
         leftRightInput = Input.GetAxisRaw("Horizontal");
@@ -254,6 +282,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles targeting and rotation while aiming
+    /// </summary>
     private void Look()
     {
         Ray mousePos = viewCamera.ScreenPointToRay(Input.mousePosition);
@@ -266,6 +297,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles camera that follows the player
+    /// </summary>
     private void ThirdPersonCamera()
     {
         Vector3 dir = new Vector3(0, 0, -distance);
@@ -287,12 +321,18 @@ public class PlayerMovement : MonoBehaviour
         camTransform.LookAt(transformTarget);
     }
 
+    /// <summary>
+    /// Sets alerted and wasDetected to true
+    /// </summary>
     private void Alerted()
     {
         alerted = true;
         wasDetected = true;
     }
 
+    /// <summary>
+    /// Handles hacking behavior
+    /// </summary>
     private void Hack()
     {
         bool hackHeld = Input.GetButton("Hack");
@@ -307,8 +347,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // TODO: change to hold until circle meter full to hack, .5 second to hack and unhack
         bool targetFound = fow.FindIndirectTarget(lookAt);
+        // TODO: Technically the player can transfer hack progress to another enemy if they are both in range and player rotates from one to the other while hacking.  Something should prevent this
         if (targetFound)
         {
             if (hackMeter > 0.5f)
@@ -350,6 +390,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cancels the hack
+    /// </summary>
     private void EndHack()
     {
         hackBar.SetActive(false);
@@ -393,11 +436,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the game over screen to active
+    /// </summary>
     private void GameOver()
     {
         gameOverCanvas.SetActive(true);
     }
 
+    /// <summary>
+    /// Updates the hackBar
+    /// </summary>
+    /// <returns></returns>
     IEnumerator HackedCoroutine()
     {
         hackBar.SetActive(true);

@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+/// <summary>
+/// Calculates and displays the user's score
+/// </summary>
 public class WinScreen : MonoBehaviour
 {
     public GameObject hackObject;
@@ -45,6 +48,7 @@ public class WinScreen : MonoBehaviour
         Invoke(nameof(Untouched), 2f);
         Invoke(nameof(Undetected), 2.5f);
         Invoke(nameof(Score), 3f);
+        // TODO: Save the high score somewhere and display it
         PlayerPrefs.SetInt("KilledEnemies", 0);
         PlayerPrefs.SetInt("SleptEnemies", 0);
         PlayerPrefs.SetInt("HackedEnemies", 0);
@@ -53,46 +57,40 @@ public class WinScreen : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void Hacks()
+    private void Hacks()
     {
         hackObject.SetActive(true);
-        hacks.text = "" + hackNum;
+        hacks.text = hackNum.ToString();
     }
 
-    void Kills()
+    private void Kills()
     {
         killObject.SetActive(true);
-        kills.text = "" + killNum;
+        kills.text = killNum.ToString();
     }
 
-    void Sleeps()
+    private void Sleeps()
     {
         sleepObject.SetActive(true);
-        sleeps.text = "" + sleepNum;
+        sleeps.text = sleepNum.ToString();
     }
 
-    void Untouched()
+    private void Untouched()
     {
         untouchedObject.SetActive(true);
-        untouched.text = "" + untouchedNum;
+        untouched.text = untouchedNum.ToString();
     }
 
-    void Undetected()
+    private void Undetected()
     {
         undetectedObject.SetActive(true);
-        undetected.text = "" + undetectedNum;
+        undetected.text = undetectedNum.ToString();
     }
 
-    void Score()
+    private void Score()
     {
         scoreObject.SetActive(true);
-        score.text = "" + scoreNum;
+        score.text = scoreNum.ToString();
     }
 
     public void MainMenu()

@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Main Menu functions
+/// </summary>
 public class MainMenu : MonoBehaviour
 {
 
@@ -22,8 +25,9 @@ public class MainMenu : MonoBehaviour
         BGM.Instance.Stop();
     }
 
-    
-
+    /// <summary>
+    /// Resets save and loads first level
+    /// </summary>
     public void NewGame()
     {
         PlayerPrefs.SetInt("KilledEnemies", 0);
@@ -36,11 +40,17 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    /// <summary>
+    /// Loads last level that was entered
+    /// </summary>
     public void LoadGame()
     {
         SceneManager.LoadScene(PlayerPrefs.GetInt("CurrentLevel"));
     }
 
+    /// <summary>
+    /// Quits the application
+    /// </summary>
     public void QuitGame()
     {
         Application.Quit();

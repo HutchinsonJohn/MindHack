@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Handles enemy patrolling behavior
+/// </summary>
 public class PatrolPath : MonoBehaviour
 {
 
     public Transform[] patrolPoints;
     public float[] patrolPauseTimes;
     public float[] lookDirections;
+
     private NavMeshAgent agent;
+    private EnemyAI enemyAI;
     private int listPosition;
     private bool isWaiting;
     private bool offPath;
+
     private float turnSpeed = 180f;
-    private EnemyAI enemyAI;
 
     // Start is called before the first frame update
     void Start()
@@ -28,12 +33,9 @@ public class PatrolPath : MonoBehaviour
         agent.SetDestination(patrolPoints[listPosition].position);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    /// <summary>
+    /// Handles enemy patrolling behavior
+    /// </summary>
     public void Patrol()
     {
         if (offPath)
@@ -62,6 +64,9 @@ public class PatrolPath : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gives enemy new patrol destination if they are alive and not offPath
+    /// </summary>
     private void StopWaiting()
     {
         listPosition++;
@@ -77,6 +82,9 @@ public class PatrolPath : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Sets offPath to true
+    /// </summary>
     public void OffPath()
     {
         offPath = true;

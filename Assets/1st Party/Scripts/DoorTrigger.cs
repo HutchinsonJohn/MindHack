@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Opens and closes door with respect to proximity of a given doorTrigger
+/// </summary>
 public class DoorTrigger : MonoBehaviour
 {
 

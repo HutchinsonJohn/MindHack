@@ -13838,7 +13838,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06d6aea18bdfb3e489be91a80bbcde3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  box: {fileID: 1770121077}
+  mesh: {fileID: 1770121079}
 --- !u!1001 &3519262275934890990
 PrefabInstance:
   m_ObjectHideFlags: 0

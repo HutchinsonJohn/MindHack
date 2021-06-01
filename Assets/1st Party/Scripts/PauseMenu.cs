@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Handles pausing behaviors
+/// </summary>
 public class PauseMenu : MonoBehaviour
 {
 
@@ -29,11 +32,18 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets GameIsPaused to isPaused
+    /// </summary>
+    /// <param name="isPaused">Whether the game is paused</param>
     public void IsPaused(bool isPaused)
     {
         GameIsPaused = isPaused;
     }
 
+    /// <summary>
+    /// Closes pauseMenu and sets timeScale to 1
+    /// </summary>
     public void Resume()
     {
         pauseMenuUI.SetActive(false);
@@ -42,6 +52,9 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = false;
     }
 
+    /// <summary>
+    /// Opens pauseMenu and sets timeScale to 0
+    /// </summary>
     public void Pause()
     {
         pauseMenuUI.SetActive(true);
@@ -49,11 +62,17 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = true;
     }
 
+    /// <summary>
+    /// Reloads current level
+    /// </summary>
     public void Retry()
     {
         SceneManager.LoadScene(PlayerPrefs.GetInt("CurrentLevel"));
     }
 
+    /// <summary>
+    /// Quits the application
+    /// </summary>
     public void QuitGame()
     {
         Application.Quit();

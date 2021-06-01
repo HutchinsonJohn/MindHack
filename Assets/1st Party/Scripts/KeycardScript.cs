@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Keycard rotation and ownership
+/// </summary>
 public class KeycardScript : MonoBehaviour
 {
 
     public AnimationCurve curve;
-    public bool isAttachedToEnemy; //Keeps track of whether the keycard is attached to enemy, set to true in editor if enemy should spawn with keycard
-    public Transform attachedToEnemy; //Set to enemy that should hold keycard, can be left empty otherwise
+    /// <summary>
+    /// Keeps track of whether the keycard is attached to enemy, set to true in editor if enemy should spawn with keycard
+    /// </summary>
+    public bool isAttachedToEnemy;
+    /// <summary>
+    /// Set to enemy that should hold keycard, can be left empty otherwise
+    /// </summary>
+    public Transform attachedToEnemy;
     private EnemyAI enemyAI;
     public bool isAttachedToPlayer;
     public Transform player;
@@ -21,14 +30,9 @@ public class KeycardScript : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void LateUpdate()
     {
+        // TODO: Allow for hacked enemy to pick up keycard (also consider whether non hacked enemies should pick it up if they run over it)
         transform.Rotate(0, Time.deltaTime * 100f, 0);
         if (isAttachedToEnemy)
         {
