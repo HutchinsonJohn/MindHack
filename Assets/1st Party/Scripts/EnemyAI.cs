@@ -155,18 +155,12 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (killed) {
-            //dying animation/ragdoll, then the corresponding knock out effect (probably split up message into slept, killed, mindhacked)
-        }
-        else if (hacked) {
-            //probably handle everything in player movement
-        } else {
+        if (!(killed || hacked)) {
             //Debug.Log(alertState);
             EnemyBehavior();
 
             animator.SetFloat("Speed", agent.velocity.magnitude);
         }
-        
     }
 
     private void LateUpdate()
