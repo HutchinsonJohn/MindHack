@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Opens and closes door with respect to proximity of a given doorTrigger
@@ -44,7 +42,9 @@ public class DoorTrigger : MonoBehaviour
                 leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);
                 rightDoor.localPosition = Vector3.Lerp(rightStart, rightEnd, openDistance);
             }
-        } else if (openDistance > 0f) {
+        }
+        else if (openDistance > 0f)
+        {
             openDistance -= Time.deltaTime;
             Mathf.Max(openDistance, 0f);
             leftDoor.localPosition = Vector3.Lerp(leftStart, leftEnd, openDistance);

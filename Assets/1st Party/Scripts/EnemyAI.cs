@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -155,7 +154,8 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!(killed || hacked)) {
+        if (!(killed || hacked))
+        {
             //Debug.Log(alertState);
             EnemyBehavior();
 
@@ -172,8 +172,8 @@ public class EnemyAI : MonoBehaviour
                 hackCanvas.SetActive(true);
             }
             wasHackable = true;
-            
-        } else
+        }
+        else
         {
             if (wasHackable)
             {
@@ -261,8 +261,8 @@ public class EnemyAI : MonoBehaviour
                         {
                             StopShooting();
                         }
-
-                    } else
+                    }
+                    else
                     {
                         StopShooting();
                     }
@@ -292,7 +292,7 @@ public class EnemyAI : MonoBehaviour
                             }
                             lookCoroutine = StartCoroutine(LookCoroutine());
                         }
-                            
+
                     }
 
                     break;
@@ -316,11 +316,12 @@ public class EnemyAI : MonoBehaviour
                     {
                         lastSpotted.SendMessage("Alerted");
                     }
-                    
+
                     if (arrived)
                     {
                         agent.stoppingDistance = 5;
-                    } else
+                    }
+                    else
                     {
                         agent.stoppingDistance = 1;
                     }
@@ -474,7 +475,8 @@ public class EnemyAI : MonoBehaviour
                     if (hit.transform.CompareTag("Player"))
                     {
                         player.SendMessage("Hit");
-                    } else if (hit.transform.CompareTag("Enemy")) //Can still miss and kill other enemies
+                    }
+                    else if (hit.transform.CompareTag("Enemy")) //Can still miss and kill other enemies
                     {
                         hit.transform.SendMessage("Killed");
                     }
@@ -538,7 +540,8 @@ public class EnemyAI : MonoBehaviour
                 {
                     StopCoroutine(lookCoroutine);
                     lookCoroutine = null;
-                } else if (searchCoroutine != null) 
+                }
+                else if (searchCoroutine != null)
                 {
                     StopCoroutine(searchCoroutine);
                     searchCoroutine = null;
@@ -574,13 +577,13 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         yield return StartCoroutine(RotationCoroutine(left));
-        
+
         yield return new WaitForSeconds(1);
 
         yield return StartCoroutine(RotationCoroutine(forward));
 
         alertState--;
-        
+
         // Clear the coroutine so the next input starts a fresh one.
         lookCoroutine = null;
     }
@@ -595,14 +598,16 @@ public class EnemyAI : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 5.5f, default))
         {
             float dist = Vector3.Distance(transform.position, hit.point);
-            if (dist > 0.5f) {
+            if (dist > 0.5f)
+            {
                 agent.SetDestination(transform.position + transform.forward * (dist - .5f));
             }
-        } else 
+        }
+        else
         {
             agent.SetDestination(transform.position + transform.forward * 5);
         }
-        
+
         // Waits for agent to arrive at destination
         while (agent.remainingDistance <= agent.stoppingDistance || !agent.hasPath)
         {

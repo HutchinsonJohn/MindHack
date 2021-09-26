@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Contains functions for finding targets in objects in field of view
@@ -10,7 +8,7 @@ public class FieldOfView : MonoBehaviour
 
     public float viewRadius;
     public float hackRadius;
-    [Range(0,360)]
+    [Range(0, 360)]
     public float viewAngle;
 
     public LayerMask targetMask;

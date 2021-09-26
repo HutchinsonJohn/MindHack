@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -114,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void LateUpdate()
@@ -211,7 +210,8 @@ public class PlayerMovement : MonoBehaviour
                             if (alerted)
                             {
                                 hit.transform.SendMessage("Damage");
-                            } else
+                            }
+                            else
                             {
                                 hit.transform.SendMessage("Slept");
                                 sleptEnemies++;
@@ -227,7 +227,8 @@ public class PlayerMovement : MonoBehaviour
                     {
                         enemy.SendMessage("Caution", transformTarget.position);
                     }
-                } else
+                }
+                else
                 {
                     tranqShot.Play();
                 }
@@ -244,7 +245,8 @@ public class PlayerMovement : MonoBehaviour
                 BGM.Instance.Unseen();
             }
             wasAlerted = false;
-        } else
+        }
+        else
         {
             if (hacked)
             {
@@ -256,12 +258,10 @@ public class PlayerMovement : MonoBehaviour
             }
             wasAlerted = true;
         }
-        
 
-        
         alerted = false;
     }
-    
+
     /// <summary>
     /// Handles player movement and rotation smoothing
     /// </summary>
@@ -308,7 +308,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, obstacleMask))
         {
             pos.z = hit.point.z + .25f;
-            float x = Mathf.Sqrt(Mathf.Pow(distance+.5f, 2) - Mathf.Pow(hit.point.z - transformTarget.position.z, 2)) + transformTarget.position.y;
+            float x = Mathf.Sqrt(Mathf.Pow(distance + .5f, 2) - Mathf.Pow(hit.point.z - transformTarget.position.z, 2)) + transformTarget.position.y;
             pos.y = x;
         }
 
@@ -384,7 +384,8 @@ public class PlayerMovement : MonoBehaviour
                 }
                 fow.hackTarget.GetComponent<EnemyAI>().SendMessage("Hackable");
             }
-        } else
+        }
+        else
         {
             hackMeter = 0;
         }
@@ -420,7 +421,8 @@ public class PlayerMovement : MonoBehaviour
                 animatorTarget.SetBool("Squat", false);
                 aiming = false;
                 killedEnemies++;
-            } else
+            }
+            else
             {
                 health--;
                 regenCooldown = 5f;

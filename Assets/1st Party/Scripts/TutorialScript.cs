@@ -1,7 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 /// <summary>
 /// Handles the dialog in the first level
@@ -46,10 +45,12 @@ public class TutorialScript : MonoBehaviour
             if (activePromptIndex == 1 && flags[2])
             {
                 StartCoroutine(TextCoroutine(3));
-            } else if (activePromptIndex == 0)
+            }
+            else if (activePromptIndex == 0)
             {
                 StartCoroutine(TextCoroutine(5));
-            } else
+            }
+            else
             {
                 activePromptIndex = -1;
             }
@@ -60,7 +61,8 @@ public class TutorialScript : MonoBehaviour
             if (PauseMenu.GameIsPaused) //Pausing occurs on LateUpdate, so this looks at the value before the pause occurs
             {
                 controls.SetActive(true);
-            } else
+            }
+            else
             {
                 controls.SetActive(false);
             }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
@@ -43,7 +41,8 @@ public class PatrolPath : MonoBehaviour
             offPath = false;
             isWaiting = false;
             agent.SetDestination(patrolPoints[listPosition].position);
-        } else if (isWaiting)
+        }
+        else if (isWaiting)
         {
             if (lookDirections[listPosition] != -1)
             {
@@ -58,7 +57,7 @@ public class PatrolPath : MonoBehaviour
         }
         if (!agent.hasPath)
         {
-            
+
             isWaiting = true;
             Invoke(nameof(StopWaiting), patrolPauseTimes[listPosition]);
         }
@@ -79,7 +78,7 @@ public class PatrolPath : MonoBehaviour
         {
             agent.SetDestination(patrolPoints[listPosition].position);
         }
-        
+
     }
 
     /// <summary>

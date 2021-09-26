@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -23,7 +22,8 @@ public class BGM : MonoBehaviour
         {
             Destroy(this.gameObject);
             return;
-        } else
+        }
+        else
         {
             instance = this;
         }
@@ -83,7 +83,7 @@ public class BGM : MonoBehaviour
         {
             currentTime += Time.deltaTime;
             undetected.volume = Mathf.Lerp(0, musicVolume, currentTime);
-            detected.volume = Mathf.Lerp(musicVolume, 0, currentTime*2);
+            detected.volume = Mathf.Lerp(musicVolume, 0, currentTime * 2);
             yield return null;
         }
         detected.Stop();
