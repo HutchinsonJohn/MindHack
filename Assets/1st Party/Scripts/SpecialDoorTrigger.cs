@@ -19,7 +19,7 @@ public class SpecialDoorTrigger : MonoBehaviour
     private Vector3 rightStart;
     private Vector3 leftEnd;
     private Vector3 rightEnd;
-    private Vector3 distanceToMove = new Vector3(0, 0, 2);
+    private Vector3 distanceToMove = new(0, 0, 2);
 
     // Start is called before the first frame update
     void Start()

@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour
 
     private float engageDistance = 6f;
     private float turnAngle = 75f;
-    private Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+    private Vector3 gunHeight = new(0, 1.4f, 0);
     private float movementShotSpreadCoefficient = 0.04f;
     private float stationaryShotSpread = 0.05f;
 
@@ -245,7 +245,7 @@ public class EnemyAI : MonoBehaviour
                     {
                         if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
                         {
-                            if (hit.transform.tag == "Player")
+                            if (hit.transform.CompareTag("Player"))
                             {
                                 if (shootingCoroutine == null && discoverCoroutine == null)
                                 {
@@ -464,17 +464,17 @@ public class EnemyAI : MonoBehaviour
     {
         if (Physics.Raycast(transform.position + gunHeight, transform.forward, out RaycastHit hit, 100, targetLayersMask))
         {
-            if (hit.transform.tag != "Enemy") //Won't shoot if another enemy is directly in front of them
+            if (!hit.transform.CompareTag("Enemy")) //Won't shoot if another enemy is directly in front of them
             {
                 animator.SetTrigger("Attack");
                 akShot.Play();
                 float shotSpread = characterController.velocity.magnitude * movementShotSpreadCoefficient + stationaryShotSpread;
                 if (Physics.Raycast(transform.position + gunHeight, transform.TransformDirection(new Vector3((1 - 2 * Random.value) * shotSpread, (1 - 2 * Random.value) * shotSpread, 1)), out hit, 100, targetLayersMask))
                 {
-                    if (hit.transform.tag == "Player")
+                    if (hit.transform.CompareTag("Player"))
                     {
                         player.SendMessage("Hit");
-                    } else if (hit.transform.tag == "Enemy") //Can still miss and kill other enemies
+                    } else if (hit.transform.CompareTag("Enemy")) //Can still miss and kill other enemies
                     {
                         hit.transform.SendMessage("Killed");
                     }

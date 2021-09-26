@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
     // Weapons
     private bool aiming;
     public bool rifleEquipped;
-    private Vector3 gunHeight = new Vector3(0, 1.4f, 0);
+    private Vector3 gunHeight = new(0, 1.4f, 0);
 
     // Hacking
     private bool hacked;
@@ -199,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
                 if (Physics.Raycast(transformTarget.position + gunHeight, transformTarget.forward, out RaycastHit hit, 100, targetLayersMask))
                 {
 
-                    if (hit.transform.tag == "Enemy")
+                    if (hit.transform.CompareTag("Enemy"))
                     {
                         if (rifleEquipped || hacked)
                         {
@@ -302,7 +302,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void ThirdPersonCamera()
     {
-        Vector3 dir = new Vector3(0, 0, -distance);
+        Vector3 dir = new(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(cameraAngle, 0, 0);
         Vector3 pos = transformTarget.position + rotation * dir;
         if (Physics.Raycast(transformTarget.position, rotation * dir, out RaycastHit hit, distance + .5f, obstacleMask))

@@ -21,7 +21,7 @@ public class LoadTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
             PlayerPrefs.SetInt("KilledEnemies", PlayerPrefs.GetInt("KilledEnemies") + player.killedEnemies);
             PlayerPrefs.SetInt("SleptEnemies", PlayerPrefs.GetInt("SleptEnemies") + player.sleptEnemies);

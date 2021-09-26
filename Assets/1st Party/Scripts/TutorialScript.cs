@@ -45,10 +45,10 @@ public class TutorialScript : MonoBehaviour
             }
             if (activePromptIndex == 1 && flags[2])
             {
-                StartCoroutine("TextCoroutine", 3);
+                StartCoroutine(TextCoroutine(3));
             } else if (activePromptIndex == 0)
             {
-                StartCoroutine("TextCoroutine", 5);
+                StartCoroutine(TextCoroutine(5));
             } else
             {
                 activePromptIndex = -1;
@@ -78,19 +78,19 @@ public class TutorialScript : MonoBehaviour
             case 2:
                 if (!flags[1] && !flags[2])
                 {
-                    StartCoroutine("TextCoroutine", flag);
+                    StartCoroutine(TextCoroutine(flag));
                 }
                 break;
             case 4:
                 if (flags[1] && !flags[4])
                 {
-                    StartCoroutine("TextCoroutine", flag);
+                    StartCoroutine(TextCoroutine(flag));
                 }
                 break;
             default:
                 if (!flags[flag])
                 {
-                    StartCoroutine("TextCoroutine", flag);
+                    StartCoroutine(TextCoroutine(flag));
                 }
                 break;
         }
